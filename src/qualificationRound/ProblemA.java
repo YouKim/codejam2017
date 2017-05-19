@@ -14,7 +14,8 @@ public class ProblemA extends Problem {
         String cakes = in.next();
         int n = in.nextInt();
         String count;
-        if (DEBUG) System.out.println("cakes:" + cakes + ", " + n );
+        if (DEBUG)
+            System.out.println("cakes:" + cakes + ", " + n);
 
         Pancake cake = new Pancake(cakes, n);
         int result = cake.solve();
@@ -28,7 +29,10 @@ public class ProblemA extends Problem {
         out.printf("Case #%d: %s\n", testNumber, count);
     }
 
- static class Pancake {
+static class Pancake {
+
+        static final char P = '+';
+        static final char M = '-';
 
         private char[] cakes;
         private int mSize;
@@ -39,18 +43,15 @@ public class ProblemA extends Problem {
         }
 
         boolean flip(int index) {
-            if (cakes.length < index + mSize) {
+
+            final int end = index + mSize;
+
+            if (cakes.length < end) {
                 return false;
             }
 
-            for (int i=0;i<mSize;i++) {
-                char ch = cakes[i+index];
-
-                if (ch == '+') {
-                    cakes[i+index] = '-';
-                } else {
-                    cakes[i+index] = '+';
-                }
+            for (int i=index;i<end;i++) {
+                cakes[i] = (cakes[i] != P?P:M);
             }
             return true;
         }
@@ -58,7 +59,7 @@ public class ProblemA extends Problem {
         int solve() {
             int count = 0;
             for (int i=0;i<cakes.length;i++) {
-                if (cakes[i] == '-') {
+                if (cakes[i] == M) {
                     if (!flip(i)) {
                         return -1;
                     } else {

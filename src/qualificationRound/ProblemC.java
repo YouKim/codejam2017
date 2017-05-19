@@ -27,17 +27,15 @@ public class ProblemC extends Problem {
 
     static class Stall {
 
-        private long mStalls;
         private long mPeople;
 
         private TreeMap<Long, Long> tiedStalls;
 
         Stall(long stalls, long people) {
-            mStalls = stalls;
             mPeople = people;
 
             tiedStalls = new TreeMap<Long, Long>();
-            add(mStalls, 1);
+            add(stalls, 1);
         }
 
         void add(long size, long number) {
@@ -58,20 +56,14 @@ public class ProblemC extends Problem {
 
         String solve() {
 
-            long remain = mPeople;
+            long located = 0;
             long min = 0;
             long max = 0;
-            while (remain > 0) {
-                Entry<Long, Long> section = tiedStalls.pollLastEntry();
+            while (located < mPeople) {
+                Entry<Long, Long> sections = tiedStalls.pollLastEntry();
 
-                long size = section.getKey();
-                long number = section.getValue();
-
-                if (remain < number) {
-                    number = remain;
-                }
-
-                remain -= number;
+                long size = sections.getKey();
+                long number = sections.getValue();
 
                 if (size > 1) {
                     if (size % 2 == 1) {
@@ -91,6 +83,8 @@ public class ProblemC extends Problem {
                     System.out.println("Size is 0!!!");
                     return null;
                 }
+
+                located += number;
             }
 
             return String.format("%d %d", max, min);
