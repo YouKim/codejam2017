@@ -129,6 +129,10 @@ public abstract class Problem {
             return Integer.parseInt(next());
         }
 
+        public long nextLong() {
+            return Long.parseLong(next());
+        }
+
         public void close() throws IOException {
             if (reader != null) {
                 reader.close();

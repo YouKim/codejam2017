@@ -14,7 +14,7 @@ public class ProblemA extends Problem {
         String cakes = in.next();
         int n = in.nextInt();
         String count;
-        System.out.println("cakes:" + cakes + ", " + n );
+        if (DEBUG) System.out.println("cakes:" + cakes + ", " + n );
 
         Pancake cake = new Pancake(cakes, n);
         int result = cake.solve();
@@ -24,7 +24,7 @@ public class ProblemA extends Problem {
         } else {
             count = "" + result;
         }
-
+        System.out.printf("Cakes #%d: %s\n", testNumber, count);
         out.printf("Case #%d: %s\n", testNumber, count);
     }
 

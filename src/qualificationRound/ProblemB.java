@@ -17,7 +17,7 @@ public class ProblemB extends Problem {
         Number number = new Number(numbers);
         String result = number.solve();
 
-        System.out.println("tidyNumbers:" + numbers + " : " + result);
+        System.out.printf("TidyNumbers #%d: %s %s\n", testNumber, numbers, result);
         out.printf("Case #%d: %s\n", testNumber, result);
     }
 
