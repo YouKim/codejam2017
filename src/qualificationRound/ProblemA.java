@@ -13,26 +13,17 @@ public class ProblemA extends Problem {
     protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         String cakes = in.next();
         int n = in.nextInt();
-        String count;
-        if (DEBUG)
-            System.out.println("cakes:" + cakes + ", " + n);
+
+        if (DEBUG) System.out.println("cakes:" + cakes + ", " + n);
 
         Pancake cake = new Pancake(cakes, n);
-        int result = cake.solve();
+        String result = cake.solve();
 
-        if (result < 0) {
-            count = "IMPOSSIBLE";
-        } else {
-            count = "" + result;
-        }
-        System.out.printf("Cakes #%d: %s\n", testNumber, count);
-        out.printf("Case #%d: %s\n", testNumber, count);
+        System.out.printf("Cakes #%d: %s\n", testNumber, result);
+        out.printf("Case #%d: %s\n", testNumber, result);
     }
 
-static class Pancake {
-
-        static final char P = '+';
-        static final char M = '-';
+    static class Pancake {
 
         private char[] cakes;
         private int mSize;
@@ -43,7 +34,6 @@ static class Pancake {
         }
 
         boolean flip(int index) {
-
             final int end = index + mSize;
 
             if (cakes.length < end) {
@@ -51,24 +41,24 @@ static class Pancake {
             }
 
             for (int i=index;i<end;i++) {
-                cakes[i] = (cakes[i] != P?P:M);
+                cakes[i] = (cakes[i]=='+'?'-':'+');
             }
             return true;
         }
 
-        int solve() {
+        String solve() {
             int count = 0;
             for (int i=0;i<cakes.length;i++) {
-                if (cakes[i] == M) {
-                    if (!flip(i)) {
-                        return -1;
-                    } else {
+                if (cakes[i] == '-') {
+                    if (flip(i)) {
                         count++;
+                    } else {
+                        return "IMPOSSIBLE";
                     }
                 }
             }
 
-            return count;
+            return String.valueOf(count);
         }
     }
 }

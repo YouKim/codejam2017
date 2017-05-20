@@ -20,16 +20,21 @@ public abstract class Problem {
     static final String INPUTFILE_EXT = ".in";
     static final String OUTPUTFILE_EXT = ".out";
 
+    static final String INPUT_FOLDER = "input/qualification/";
+    static final String OUTPUT_FOLDER = "output/qualification/";
+
     static final boolean DEBUG = false;
 
     protected String mAlpha;
     protected String mTitle;
 
+    abstract void solveTest(int testNumber, InputReader in, PrintWriter out);
+
     public final void solve() {
         Locale.setDefault(Locale.US);
         try {
             final String regex = mAlpha + INPUT_PATERN;
-            File directory = new File(".");
+            File directory = new File(INPUT_FOLDER);
             File[] inputFiles = directory.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -54,7 +59,7 @@ public abstract class Problem {
     public final void processFile(File inputFile) {
 
         String inputFileName = inputFile.getName();
-        String outputFileName = inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
+        String outputFileName = OUTPUT_FOLDER + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
         System.out.println("outputFileName:" + outputFileName);
 
         InputStream inputStream;
@@ -73,7 +78,6 @@ public abstract class Problem {
             try {
                 inputStream.close();
             } catch (IOException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
             e.printStackTrace();
@@ -96,14 +100,10 @@ public abstract class Problem {
             try {
                 in.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-
     }
-
-    abstract void solveTest(int testNumber, InputReader in, PrintWriter out);
 
     static class InputReader {
         public BufferedReader reader;

@@ -11,16 +11,14 @@ public class ProblemB extends Problem {
 
     @Override
     void solveTest(int testNumber, InputReader in, PrintWriter out) {
+        String letters = in.next();
 
-        String numbers = in.next();
-
-        Number number = new Number(numbers);
+        Number number = new Number(letters);
         String result = number.solve();
 
-        System.out.printf("TidyNumbers #%d: %s %s\n", testNumber, numbers, result);
+        System.out.printf("TidyNumbers #%d: %s %s\n", testNumber, letters, result);
         out.printf("Case #%d: %s\n", testNumber, result);
     }
-
 
     static class Number {
 
@@ -31,7 +29,6 @@ public class ProblemB extends Problem {
         }
 
         String solve() {
-
             for (int i=1;i<numbers.length;i++) {
                 if (numbers[i-1] > numbers[i]) {
                     numbers[i-1]--;

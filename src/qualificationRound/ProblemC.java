@@ -13,7 +13,6 @@ public class ProblemC extends Problem {
 
     @Override
     void solveTest(int testNumber, InputReader in, PrintWriter out) {
-
         long stalls = in.nextLong();
         long people = in.nextLong();
 
@@ -24,22 +23,18 @@ public class ProblemC extends Problem {
         out.printf("Case #%d: %s\n", testNumber, result);
     }
 
-
     static class Stall {
 
         private long mPeople;
-
         private TreeMap<Long, Long> tiedStalls;
 
         Stall(long stalls, long people) {
             mPeople = people;
-
             tiedStalls = new TreeMap<Long, Long>();
             add(stalls, 1);
         }
 
         void add(long size, long number) {
-
             if (size < 1) {
                 return;
             }
@@ -55,7 +50,6 @@ public class ProblemC extends Problem {
         }
 
         String solve() {
-
             long located = 0;
             long min = 0;
             long max = 0;
@@ -83,7 +77,6 @@ public class ProblemC extends Problem {
                     System.out.println("Size is 0!!!");
                     return null;
                 }
-
                 located += number;
             }
 
