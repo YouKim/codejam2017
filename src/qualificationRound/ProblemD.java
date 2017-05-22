@@ -3,7 +3,6 @@ package qualificationRound;
 import java.io.PrintWriter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,8 +21,6 @@ public class ProblemD extends Problem {
         int n = in.nextInt();
         int pre = in.nextInt();
 
-        if (DEBUG) System.out.println("map size :" + n + " and preplaced:" + pre);
-
         FashionMap map = new FashionMap(n);
 
         for (int i = 0; i < pre; i++) {
@@ -33,18 +30,10 @@ public class ProblemD extends Problem {
             int col = in.nextInt();
 
             map.put(row, col, model);
-            //System.out.println("model :" + model + " " + row + " " + col);
         }
-        if (DEBUG) map.print();
 
         String result = map.solve();
         out.printf("Case #%d: %s", testNumber, result);
-
-        if (DEBUG) {
-            System.out.println("=============== SOLVED");
-            map.print();
-            map.printMap();
-        }
     }
 
     static class FashionMap {
@@ -141,79 +130,6 @@ public class ProblemD extends Problem {
             return true;
         }
 
-        void print(PrintWriter out) {
-            StringBuffer buffer = new StringBuffer();
-
-            Iterator<RowCol> iter = mModels.keySet().iterator();
-
-            while (iter.hasNext()) {
-                RowCol rowcol = iter.next();
-
-                char ch = mModels.get(rowcol);
-
-                int row = rowcol.mRow;
-                int col = rowcol.mCol;
-
-                buffer.append(String.format("%c %d %d\n", ch, row, col));
-            }
-
-            System.out.print(buffer);
-            System.out.println("Score:" + mScore);
-        }
-
-        // For debugging.
-        void print() {
-            StringBuffer buffer = new StringBuffer();
-
-            Iterator<RowCol> iter = mModels.keySet().iterator();
-
-            while (iter.hasNext()) {
-                RowCol rowcol = iter.next();
-
-                char ch = mModels.get(rowcol);
-
-                int row = rowcol.mRow;
-                int col = rowcol.mCol;
-
-                buffer.append(String.format("%c %d %d\n", ch, row, col));
-            }
-
-            System.out.print(buffer);
-            System.out.println("Score:" + mScore);
-        }
-
-        // For debugging only, zero based.
-        void printMap() {
-            char[] base = new char[mSize];
-            Arrays.fill(base, E);
-
-            StringBuffer[] buffer = new StringBuffer[mSize];
-
-            for (int i = 0; i < mSize; i++) {
-                buffer[i] = new StringBuffer();
-                buffer[i].append(base);
-            }
-
-            Iterator<RowCol> iter = mModels.keySet().iterator();
-
-            while (iter.hasNext()) {
-                RowCol key = iter.next();
-
-                char ch = mModels.get(key);
-
-                int row = key.mRow;
-                int col = key.mCol;
-
-                buffer[row - 1].setCharAt(col - 1, ch);
-            }
-
-            System.out.println("total map");
-
-            for (int i = 0; i < mSize; i++) {
-                System.out.println(buffer[i]);
-            }
-        }
-
         String solve() {
             Biparted rowcolGraph = new Biparted();
             Biparted diagGraph = new Biparted();
@@ -249,14 +165,10 @@ public class ProblemD extends Problem {
                 update((sum+diff-mSize)/2, (sum-diff+mSize)/2, P);
             }
 
-            //rowcolGraph.print();
-            //diagGraph.print();
             return getResult();
         }
 
-
         String getResult() {
-
             StringBuffer result = new StringBuffer();
 
             result.append(String.format("%d %d\n", mScore, mUpdates.size()));
@@ -369,23 +281,6 @@ public class ProblemD extends Problem {
             }
 
             return results;
-        }
-
-        // For debugging only
-        void printCandidateList() {
-            StringBuffer buffer = new StringBuffer();
-
-            for (LNode node :sortedLeftNodes) {
-                if (node.getCandidateSize() > 0) {
-                    buffer.append("\nL " + node.mIndex + ":");
-                    Iterator<Node> iter = node.mCandidate.iterator();
-                    while (iter.hasNext()) {
-                        Node item = iter.next();
-                        buffer.append(item.mIndex + " ");
-                    }
-                }
-            }
-            System.out.println(buffer);
         }
     }
 
