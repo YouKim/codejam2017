@@ -133,6 +133,10 @@ public abstract class Problem {
             return Long.parseLong(next());
         }
 
+        public char nextChar() {
+            return next().charAt(0);
+        }
+
         public void close() throws IOException {
             if (reader != null) {
                 reader.close();
