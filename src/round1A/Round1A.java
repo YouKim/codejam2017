@@ -1,12 +1,11 @@
-package qualificationRound;
+package round1A;
 
-public class Main {
+public class Round1A {
     public static void main(String[] args) {
         Problem [] problems = {
                 new ProblemA(),
                 new ProblemB(),
                 new ProblemC(),
-                new ProblemD(),
         };
 
         for (Problem prob : problems) {

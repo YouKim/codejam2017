@@ -106,10 +106,10 @@ public class ProblemD extends Problem {
             RowCol rowcol = new RowCol(row, col);
 
             char old = E;
-            Character item = mModels.get(rowcol);
+            Character item = mUpdates.get(rowcol);
 
             if (item == null) {
-                item = mUpdates.get(rowcol);
+                item = mModels.get(rowcol);
             }
 
             if (item != null) {
