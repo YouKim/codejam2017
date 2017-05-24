@@ -86,10 +86,6 @@ public class ProblemB extends Problem {
             }
 
             public boolean makeKit(Packages list) {
-                if (isInvalid) {
-                    return false;
-                }
-
                 int required = mIngr;
                 Pack [] templet = new Pack[mIngr];
 
@@ -120,10 +116,6 @@ public class ProblemB extends Problem {
             }
 
             public boolean hasSameRange(Pack target) {
-                if (target.isInvalid) {
-                    return false;
-                }
-
                 int min = (minServ > target.minServ)?minServ:target.minServ;
                 int max = (maxServ < target.maxServ)?maxServ:target.maxServ;
 
