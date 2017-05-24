@@ -4,7 +4,7 @@ public class Round1A {
     public static void main(String[] args) {
         Problem [] problems = {
                 //new ProblemA(),
-                new ProblemB(),
+                //new ProblemB(),
                 new ProblemC(),
         };
 
