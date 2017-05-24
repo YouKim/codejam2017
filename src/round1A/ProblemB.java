@@ -131,11 +131,8 @@ public class ProblemB extends Problem {
                 mCandidate = new Packages[total];
                 weight = gram;
 
-                double recipe90 = recipe * 0.9;
-                double recipe110 = recipe * 1.1;
-
-                double max = gram / recipe90;
-                double min = gram / recipe110;
+                double max = (gram * 10.0) / (recipe * 9.0);
+                double min = (gram * 10.0) / (recipe * 11.0);
 
                 minServ = (int) Math.ceil(min);
                 maxServ = (int) Math.floor(max);
