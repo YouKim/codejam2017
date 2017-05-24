@@ -29,14 +29,14 @@ public class ProblemB extends Problem {
         int mPack;
 
         int mRecipe[];
-        Packages mPacks;
+        ArrayList<Pack> mPacks;
 
         public Recipe(int ingredients, int packages, InputReader in) {
             mIngr = ingredients;
             mPack = packages;
 
             mRecipe = new int[ingredients];
-            mPacks = new Packages();
+            mPacks = new ArrayList<>();
 
             for (int i=0;i<ingredients;i++) {
                 mRecipe[i] = in.nextInt();
@@ -54,9 +54,15 @@ public class ProblemB extends Problem {
         }
 
         public String solve() {
-            int made = 0;
-            mPacks.sortByMaxServ();
 
+            Collections.sort(mPacks, new Comparator<Pack>() {
+                @Override
+                public int compare(Pack o1, Pack o2) {
+                    return o1.maxServ - o2.maxServ;
+                }
+            });
+
+            int made = 0;
             while (mPacks.size()>= mIngr) {
                 Pack pack = mPacks.remove(0);
                 if (pack.makeKit(mPacks)) {
@@ -85,7 +91,7 @@ public class ProblemB extends Problem {
                 isInvalid = maxServ < minServ || (maxServ == 0);
             }
 
-            public boolean makeKit(Packages list) {
+            public boolean makeKit(ArrayList<Pack> list) {
                 int required = mIngr;
                 Pack [] templet = new Pack[mIngr];
 
@@ -120,19 +126,6 @@ public class ProblemB extends Problem {
                 int max = (maxServ < target.maxServ)?maxServ:target.maxServ;
 
                 return (max - min + 1 > 0);
-            }
-        }
-
-        class Packages extends ArrayList<Pack> {
-
-            void sortByMaxServ() {
-                Collections.sort(this, new Comparator<Pack>() {
-
-                    @Override
-                    public int compare(Pack o1, Pack o2) {
-                        return o1.maxServ - o2.maxServ;
-                    }
-                });
             }
         }
     }
