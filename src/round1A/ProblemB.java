@@ -57,9 +57,8 @@ public class ProblemB extends Problem {
             int made = 0;
             mPacks.sortByMaxServ();
 
-            Iterator<Pack> iter = mPacks.iterator();
-            while (iter.hasNext()) {
-                Pack pack = iter.next();
+            while (mPacks.size()>= mIngr) {
+                Pack pack = mPacks.remove(0);
                 if (pack.makeKit(mPacks)) {
                     made++;
                 }
@@ -112,16 +111,12 @@ public class ProblemB extends Problem {
 
                 if (required == 0) {
                     for (Pack pack:templet) {
-                        pack.open();
+                        list.remove(pack);
                     }
                     return true;
                 }
 
                 return false;
-            }
-
-            private void open() {
-                isInvalid = true;
             }
 
             public boolean hasSameRange(Pack target) {
