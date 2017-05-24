@@ -21,9 +21,9 @@ public class ProblemC extends Problem {
 
     static class Game {
         final int mHPMax;
-        int mAT;
-        int kHP;
-        int kAT;
+        final int mAT;
+        final int kHP;
+        final int kAT;
         final int mBuff;
         final int mDebuff;
         HashMap<State, Integer> map;
@@ -31,7 +31,7 @@ public class ProblemC extends Problem {
         int minimumTurn = TURN_IMPOSSILE;
 
         static final int TURN_MAX = 100;
-        static final int TURN_IMPOSSILE = TURN_MAX + 1;
+        static final int TURN_IMPOSSILE = TURN_MAX + 5;
 
         Game(InputReader in) {
             mHPMax = in.nextInt();
@@ -57,12 +57,13 @@ public class ProblemC extends Problem {
 
         public int simulate(int hp, int att, int knightHP, int knightATT, int turn) {
 
-            if (turn > minimumTurn) {
+
+            if (turn > TURN_MAX) {
                 return TURN_IMPOSSILE;
             }
 
-            if (knightATT < 0) {
-                knightATT = 0;
+            if (hp <= 0) {
+                return TURN_IMPOSSILE;
             }
 
             //System.out.println("simulate:" + hp + "," + att + "," + knightHP + "," + knightATT + "," + turn);
@@ -75,12 +76,9 @@ public class ProblemC extends Problem {
 
             if (knightHP - att <=0) {
                 map.put(state, 1);
-
-                if (1 + turn < minimumTurn) {
-                    minimumTurn = 1 + turn;
-                }
                 return 1;
             }
+
             map.put(state, TURN_IMPOSSILE);
 
             int minimum = TURN_IMPOSSILE;
@@ -88,31 +86,37 @@ public class ProblemC extends Problem {
 
             if (hp - knightATT <= 0) {
                 //cure
-                hp = mHPMax;
-                visited = simulate(hp - knightATT, att, knightHP, knightATT, turn+1);
-                minimum = Math.min(minimum, visited+1);
+                visited = simulate(mHPMax - knightATT, att, knightHP, knightATT, turn+1) + 1;
+                if (visited < minimum) {
+                    minimum = visited;
+                }
             } else {
                 //attack
-                visited = simulate(hp - knightATT, att, knightHP - att, knightATT, turn+1);
-                minimum = Math.min(minimum, visited+1);
+                visited = simulate(hp - knightATT, att, knightHP - att, knightATT, turn+1) + 1;
+                if (visited < minimum) {
+                    minimum = visited;
+                }
+
                 //buff
                 if (mBuff > 0) {
-                    visited = simulate(hp - knightATT, att+mBuff, knightHP, knightATT, turn+1);
-                    minimum = Math.min(minimum, visited+1);
+                    visited = simulate(hp - knightATT, att+mBuff, knightHP, knightATT, turn+1) + 1;
+                    if (visited < minimum) {
+                        minimum = visited;
+                    }
                 }
+
                 //debuff
                 if (mDebuff > 0 && knightATT > 0) {
-                    knightATT = knightATT - mDebuff;
-                    if (knightATT < 0) {
-                        knightATT = 0;
+                    int debuffed = knightATT - mDebuff;
+                    if (debuffed < 0) {
+                        debuffed = 0;
                     }
 
-                    visited = simulate(hp - knightATT, att, knightHP, knightATT, turn+1);
-                    minimum = Math.min(minimum, visited+1);
+                    visited = simulate(hp - debuffed, att, knightHP, debuffed, turn+1) + 1;
+                    if (visited < minimum) {
+                        minimum = visited;
+                    }
                 }
-            }
-            if (minimum + turn < minimumTurn) {
-                minimumTurn = minimum + turn;
             }
 
             map.put(state, minimum);
@@ -135,9 +139,7 @@ public class ProblemC extends Problem {
             public boolean equals(Object object) {
 
                 if (object instanceof State) {
-
                     State target = (State) object;
-
                     int length = states.length;
 
                     if (target.states.length == length) {
@@ -158,11 +160,7 @@ public class ProblemC extends Problem {
             public int hashCode() {
                 int hash = 0;
                 for (int i=0;i<states.length;i++) {
-                    if (i%2==0) {
-                        hash += states[i];
-                    } else {
-                        hash -= states[i];
-                    }
+                    hash += states[i];
                 }
 
                 return hash;
