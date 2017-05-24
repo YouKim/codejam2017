@@ -45,7 +45,7 @@ public class ProblemB extends Problem {
             for (int i=0;i<ingredients;i++) {
                 for (int j=0;j<packages;j++) {
                     int gram = in.nextInt();
-                    Pack pack = new Pack(i, gram, mRecipe[i], ingredients);
+                    Pack pack = new Pack(i, gram, mRecipe[i]);
                     if (!pack.isInvalid) {
                         mPacks.add(pack);
                     }
@@ -74,11 +74,11 @@ public class ProblemB extends Problem {
             int maxServ;
             boolean isInvalid;
 
-            Pack(int index, int gram, int recipe, int total) {
+            Pack(int index, int weight, int recipe) {
                 this.index = index;
 
-                double max = (gram * 10.0) / (recipe * 9.0);
-                double min = (gram * 10.0) / (recipe * 11.0);
+                double max = (weight * 10.0) / (recipe * 9.0);
+                double min = (weight * 10.0) / (recipe * 11.0);
 
                 minServ = (int) Math.ceil(min);
                 maxServ = (int) Math.floor(max);
@@ -91,31 +91,26 @@ public class ProblemB extends Problem {
                     return false;
                 }
 
-                int needed = 0;
+                int required = mIngr;
                 Pack [] templet = new Pack[mIngr];
 
                 templet[index] = this;
-                needed++;
+                required--;
 
-                if (needed < mIngr) {
+                if (required > 0) {
                     Iterator<Pack> iter = list.iterator();
-
-                    while (iter.hasNext() && needed < mIngr) {
-
+                    while (iter.hasNext() && required > 0) {
                         Pack pack = iter.next();
-
-                        if (pack.index != this.index && !pack.isInvalid) {
-                            if (templet[pack.index] == null) {
-                                if (hasSameRange(pack)) {
-                                    templet[pack.index] = pack;
-                                    needed++;
-                                }
+                        if (templet[pack.index] == null) {
+                            if (hasSameRange(pack)) {
+                                templet[pack.index] = pack;
+                                required--;
                             }
                         }
                     }
                 }
 
-                if (needed == mIngr) {
+                if (required == 0) {
                     for (Pack pack:templet) {
                         pack.open();
                     }
