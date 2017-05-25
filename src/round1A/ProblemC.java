@@ -19,55 +19,50 @@ public class ProblemC extends Problem {
     }
 
     static class Game {
-        final int DH;
-        final int DA;
-        final int KH;
-        final int KA;
-        final int BF;
-        final int DB;
-
-        int mOptA;
-        int mOptB;
-        int mOptC;
-        int mOptD;
+        final long mHD, mAD, mHK, mAK, mB, mD;
+        int mOptA, mOptB, mOptC, mOptD;
 
         static final int TURN_MAX = 100;
         static final int TURN_IMPOSSIBLE = TURN_MAX + 5;
 
         Game(InputReader in) {
-            DH = in.nextInt();
-            DA = in.nextInt();
-            KH = in.nextInt();
-            KA = in.nextInt();
-            BF = in.nextInt();
-            DB = in.nextInt();
+            mHD = in.nextInt();
+            mAD = in.nextInt();
+            mHK = in.nextInt();
+            mAK = in.nextInt();
+            mB = in.nextInt();
+            mD = in.nextInt();
 
             findOptimalAB();
             findOptimalCD();
         }
 
         void findOptimalAB() {
-            int minA = TURN_IMPOSSIBLE;
-            int minB = TURN_IMPOSSIBLE;
-            int minAB = TURN_IMPOSSIBLE;
 
-            for (int B=0;B<minAB;B++) {
-                int A = attackCount(KH, DA + BF * B);
-                if (A + B < minAB) {
-                    minAB = A + B;
-                    minA = A;
-                    minB = B;
+            if (mB <= 0) {
+                mOptA = attackCount(mHK, mAD);
+                mOptB = 0;
+
+                System.out.println("findOptimalAB  A:" + mOptA + " " + mHK + "(HP) " + mAD + "X" + mOptA + "=" + (mAD*mOptA));
+            } else {
+                int minA = TURN_IMPOSSIBLE;
+                int minB = TURN_IMPOSSIBLE;
+                int minAB = TURN_MAX;
+
+                for (int B=0;B<minAB;B++) {
+                    int A = attackCount(mHK, mAD + mB * B);
+                    if (A + B < minAB) {
+                        minAB = A + B;
+                        minA = A;
+                        minB = B;
+                    }
                 }
 
-                if (BF <= 0) {
-                    break;
-                }
+                mOptA = minA;
+                mOptB = minB;
+
+                System.out.println("findOptimalAB  A:" + mOptA + " B:" + mOptB  + " " + mHK + "(HP) " + (mAD+mB*mOptB) + "X" + mOptA + "=" + ((mAD+mB*mOptB)*mOptA));
             }
-
-            mOptA = minA;
-            mOptB = minB;
-
-            System.out.println("findOptimalAB  A:" + minA + " B:" + minB + " BF:" + BF);
         }
 
         void findOptimalCD() {
@@ -80,53 +75,49 @@ public class ProblemC extends Problem {
 
             for (int debuff_limit=0;debuff_limit<minCD;debuff_limit++) {
 
+                long hd = mHD, ad = mAD, hk = mHK, ak = mAK;
                 int A = 0, B = 0, C = 0, D = 0;
 
-                int dh = DH;
-                int da = DA;
-                int kh = KH;
-                int ka = KA;
-
                 StringBuffer commands = new StringBuffer();
+                System.out.println("T:" + 0 + " HP:" + hd + " DA:" + ad + " KH:" + hk + " KA:" + ak + " B:" + mB + " DB:" + mD);
 
                 for (int T=1;T<=maxTurn;T++) {
 
-                    int debuffed_ka = ka;
+                    long ak_debuffed = ak;
                     if (D < debuff_limit) {
-                        debuffed_ka = ka - DB;
-                        if (debuffed_ka < 0) {
-                            debuffed_ka = 0;
+                        ak_debuffed = ak - mD;
+                        if (ak_debuffed < 0) {
+                            ak_debuffed = 0;
                         }
                     }
 
-                    if (kh - da <= 0) {
+                    if (hk - ad <= 0) {
                         A++;
-                        kh -= da;
+                        hk -= ad;
                         commands.append('A');
-                    } else if (dh - debuffed_ka <= 0) {
+                    } else if (hd - ak_debuffed <= 0) {
                         //cure
                         C++;
-                        dh = DH;
+                        hd = mHD;
                         commands.append('C');
                     } else {
-                        if (D < debuff_limit && ka > 0 && DB > 0) {
+                        if (D < debuff_limit && ak > 0 && mD > 0) {
                             D++;
-                            ka = debuffed_ka;
+                            ak = ak_debuffed;
                             commands.append('D');
                         } else if (B < mOptB) {
                             B++;
-                            da += BF;
+                            ad += mB;
                             commands.append('B');
                         } else {
                             A++;
-                            kh -= da;
+                            hk -= ad;
                             commands.append('A');
                         }
                     }
 
-                    if (kh <= 0) {
+                    if (hk <= 0) {
                         System.out.println("[WIN] T:" + T + " A:" + A + " B:" + B + " C:" + C + " D:" + D + " cmds:" + commands);
-
                         if (C + D < minCD) {
                             minCD = C + D;
                             minC = C;
@@ -134,17 +125,30 @@ public class ProblemC extends Problem {
                         }
                         break;
                     } else {
-                        // Knight's turn
-                        dh -= ka;
+                        // Knight's turn.
+                        hd -= ak;
 
-                        if (dh <= 0) {
+                        if (hd <= 0) {
                             System.out.println("[LOST] T:" + T + " cmds:" + commands);
                             break;
                         }
+
+                        if (commands.toString().endsWith("CC")) {
+                            System.out.println("[IMPOSIBLE] CC");
+                            break;
+                        }
+
+                        if (mOptA+mOptB+C+D > TURN_MAX) {
+                            System.out.println("[BUSTED] A+B+C+D > 100");
+                            break;
+                        }
                     }
+
+                    System.out.println("T:" + T + " HP:" + hd + " DA:" + ad + " KH:" + hk + " KA:" + ak + " cmds:" + commands);
                 }
 
-                if (DB <= 0) {
+                if (mD <= 0) {
+                    System.out.println("DEBUFF is 0, no more simulation");
                     break;
                 }
             }
@@ -154,20 +158,15 @@ public class ProblemC extends Problem {
             System.out.println("findOptimalCD  C:" + minC + " D:" +  minD);
         }
 
-        int attackCount(int hp, int attack) {
+        int attackCount(long hp, long attack) {
+            long result = hp/attack + (hp%attack>0?1:0);
 
-            /*
-            int i=0;
-            for (i=0;hp>0;i++) {
-                hp -= attack;
+            if (result > TURN_MAX) {
+                return TURN_MAX;
             }
 
-            return i;
-            */
-
-            return hp/attack + (hp%attack>0?1:0);
+            return (int) result;
         }
-
 
         String solve() {
             int T = mOptA + mOptB + mOptC + mOptD;
@@ -178,6 +177,5 @@ public class ProblemC extends Problem {
                 return "IMPOSSIBLE";
             }
         }
-
     }
 }
