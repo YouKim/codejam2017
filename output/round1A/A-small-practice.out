@@ -14,7 +14,7 @@ EE
 EE
 CC
 BD
-BD
+AA
 AA
 Case #5:
 GGBD
@@ -35,12 +35,12 @@ CCCA
 DDDD
 Case #9:
 AABB
-CCCD
+CCDD
 EEFF
 Case #10:
 FCC
 EED
-EED
+BBA
 BBA
 Case #11:
 BCC
@@ -107,7 +107,7 @@ FDD
 FDD
 Case #26:
 DDDD
-BCCE
+BCEE
 AAAA
 Case #27:
 ADD
@@ -115,12 +115,12 @@ BBB
 CCE
 Case #28:
 BBBB
-EEEC
+EECC
 AAAD
 Case #29:
 BAA
 EFD
-EFD
+CCC
 CCC
 Case #30:
 AAB
@@ -143,8 +143,8 @@ CCC
 Case #34:
 AB
 Case #35:
-BBBC
-BBBC
+BBCC
+BBCC
 EEAD
 Case #36:
 DBBB
@@ -179,7 +179,7 @@ AAAA
 BBBB
 CCCC
 Case #44:
-AABBCCDDEEFF
+AABBCCDEEFFF
 Case #45:
 CCB
 CCB
@@ -187,14 +187,14 @@ EEE
 DAF
 Case #46:
 AAAA
-DDDC
+DDCC
 BBEE
 Case #47:
 AAAA
 BBDD
-CCCE
+CCEE
 Case #48:
-ADDE
+ADEE
 BCCC
 BCCC
 Case #49:
@@ -281,8 +281,8 @@ ABCD
 ABCD
 ABCD
 Case #69:
-AABBCC
-DDDEEF
+AABCCC
+DDDEFF
 Case #70:
 AAA
 AAA
@@ -319,7 +319,7 @@ CDB
 AAA
 Case #79:
 EEEE
-CCCD
+CCDD
 AAAB
 Case #80:
 BBBB
@@ -336,11 +336,11 @@ CCC
 Case #83:
 CDD
 FFB
-FFB
+AAE
 AAE
 Case #84:
 CEEE
-AAAB
+AABB
 DDDD
 Case #85:
 A
@@ -350,9 +350,9 @@ B
 C
 C
 D
-D
 E
 E
+F
 F
 F
 Case #86:
@@ -370,7 +370,7 @@ BA
 CC
 Case #89:
 CCCC
-BDDA
+BDAA
 EEEE
 Case #90:
 BJD
@@ -405,7 +405,7 @@ DCA
 Case #97:
 AA
 AA
-AA
+BB
 BB
 Case #98:
 BAA

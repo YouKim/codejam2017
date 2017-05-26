@@ -23,9 +23,7 @@ public class ProblemA extends Problem {
 
         Cake cake = new Cake(row, col, letters);
 
-        //cake.printCake();
         String result = cake.solve();
-        //cake.printCake();
         out.printf("Case #%d:\n%s", testNumber, result);
     }
 
@@ -33,15 +31,15 @@ public class ProblemA extends Problem {
 
         static final char ASK ='?';
 
-        int mRow;
-        int mCol;
+        final int R;
+        final int C;
 
         char [][] mCake;
         boolean[] hasLetter;
 
         public Cake(int row, int col, char [][] cake) {
-            mRow = row;
-            mCol = col;
+            R = row;
+            C = col;
             mCake = cake;
 
             hasLetter = new boolean[row];
@@ -49,8 +47,8 @@ public class ProblemA extends Problem {
         }
 
         void checkLetter() {
-            for (int r=0;r<mRow;r++) {
-                for (int c=0;c<mCol;c++) {
+            for (int r=0;r<R;r++) {
+                for (int c=0;c<C;c++) {
                     if (mCake[r][c] != ASK) {
                         hasLetter[r] = true;
                         break;
@@ -61,35 +59,33 @@ public class ProblemA extends Problem {
 
         public String solve() {
 
-            for (int r=0;r<mRow;r++) {
-                // left -> right by column
-                for (int c=1;c<mCol;c++) {
-                    if (mCake[r][c] == ASK) {
-                        mCake[r][c] = mCake[r][c-1];
-                    }
-                }
+            for (int r=0;r<R;r++) {
 
-                // right -> left by column
-                for (int c=mCol-2;c>=0;c--) {
-                    if (mCake[r][c] == ASK) {
-                        mCake[r][c] = mCake[r][c+1];
+                char[] row = mCake[r];
+
+                for (int i=1;i<C;i++) {
+
+                    if (row[i] == ASK) {
+                        row[i] = row[i-1];
+                    }
+
+                    if (row[C-i-1] == ASK) {
+                        row[C-i-1] = row[C-i];
                     }
                 }
             }
 
-            // top -> bottom by line
-            for (int r=1;r<mRow;r++) {
-                if (hasLetter[r] == false && hasLetter[r-1] == true) {
-                    copyLine(r-1, r);
-                    hasLetter[r] = true;
+            for (int i=1;i<R;i++) {
+                // top -> bottom by line
+                if (hasLetter[i] == false && hasLetter[i-1] == true) {
+                    mCake[i] = mCake[i-1];
+                    hasLetter[i] = true;
                 }
-            }
 
-            // bottom -> top by line
-            for (int r=mRow-1;r>0;r--) {
-                if (hasLetter[r-1] == false && hasLetter[r] == true) {
-                    copyLine(r, r-1);
-                    hasLetter[r-1] = true;
+                // bottom -> top by line
+                if (hasLetter[R-i-1] == false && hasLetter[R-i] == true) {
+                    mCake[R-i-1] = mCake[R-i];
+                    hasLetter[R-i-1] = true;
                 }
             }
 
@@ -103,19 +99,6 @@ public class ProblemA extends Problem {
                 result.append(mCake[i]).append("\n");
             }
             return result.toString();
-        }
-
-        void copyLine(int source, int target) {
-            for (int c=0;c<mCol;c++) {
-                 mCake[target][c] = mCake[source][c];
-            }
-        }
-
-        public void printCake() {
-            System.out.println("==============");
-            for (int i=0;i<mCake.length;i++) {
-                System.out.println(mCake[i]);
-            }
         }
     }
 }
