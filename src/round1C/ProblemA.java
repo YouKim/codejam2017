@@ -1,7 +1,6 @@
 package round1C;
 
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,8 +16,8 @@ public class ProblemA extends Problem {
     protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
 
         Pancakes cakes = new Pancakes(in);
-        String result = cakes.solve();
-        out.printf("Case #%d: %s\n", testNumber, result);
+        double result = cakes.solve();
+        out.printf("Case #%d: %f\n", testNumber, result);
     }
 
     static class Pancakes {
@@ -46,7 +45,7 @@ public class ProblemA extends Problem {
             }
         }
 
-        String solve() {
+        double solve() {
             Collections.sort(cakes, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
@@ -83,13 +82,7 @@ public class ProblemA extends Problem {
                 }
             }
 
-            BigDecimal big = new BigDecimal(String.valueOf(maximumArea));
-            BigDecimal pi = new BigDecimal("3.141592653589793238");
-
-            BigDecimal result = big.multiply(pi);
-            result = result.setScale(9, BigDecimal.ROUND_HALF_UP);
-
-            return result.toPlainString();
+            return maximumArea * Math.PI;
         }
 
         class Cake {
