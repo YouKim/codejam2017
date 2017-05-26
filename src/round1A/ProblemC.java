@@ -19,10 +19,14 @@ public class ProblemC extends Problem {
     }
 
     static class Game {
-        static final int TURN_MAX = 100;
-        static final int TURN_IMPOSSIBLE = TURN_MAX + 5;
+        // Targeted to large 10^9
+        static final int ACTION_MAX = 1000000000;
+        static final int TURN_MAX = 4*ACTION_MAX;  //AB combo <= 10^9 + D <=10^9 + C can interleave all action.
+        static final int TURN_IMPOSSIBLE = Integer.MAX_VALUE;
 
         final int mHd, mAd, mHk, mAk, mB, mD;
+        int minimumAB = TURN_IMPOSSIBLE;
+        int minimumWin = TURN_IMPOSSIBLE;
 
         Game(InputReader in) {
             mHd = in.nextInt();
@@ -33,13 +37,15 @@ public class ProblemC extends Problem {
             mD = in.nextInt();
         }
 
+        // Maximum value will be 100 in small or 10^9 in large
         int findOptimalBuff() {
-
             if (mB <= 0) {
+                minimumAB = attackCount(mHk, mAd);
+                System.out.println("Minimal Attack & Buff combo:" + minimumAB);
                 return 0;
             } else {
                 int optB = TURN_IMPOSSIBLE;
-                int minAB = TURN_IMPOSSIBLE;
+                int minAB = ACTION_MAX;
 
                 for (int B=0;B<minAB;B++) {
                     int A = attackCount(mHk, mAd + mB * B);
@@ -48,19 +54,14 @@ public class ProblemC extends Problem {
                         optB = B;
                     }
                 }
-
+                minimumAB = minAB;
+                System.out.println("Minimal Attack & Buff combo:" + minimumAB);
                 return optB;
             }
         }
 
         int attackCount(int hp, int attack) {
-            int result = hp/attack + (hp%attack>0?1:0);
-
-            if (result > TURN_MAX) {
-                return TURN_IMPOSSIBLE;
-            }
-
-            return result;
+            return hp/attack + (hp%attack>0?1:0);
         }
 
         int findDebuffLimit() {
@@ -68,11 +69,13 @@ public class ProblemC extends Problem {
                 return 0;
             } else {
                 int result = mAk/mD + (mAk%mD>0?1:0);
-                if (result > TURN_MAX) {
-                    return TURN_MAX;
-                }
                 return result;
             }
+        }
+
+        // Check if 1st turn is cure;
+        boolean isImpossible() {
+            return ((mHk - mAd > 0) && (mHd - (mAk - mD)) < 0);
         }
 
         int simulate(int BuffLimit, int DebuffLimit) {
@@ -81,15 +84,16 @@ public class ProblemC extends Problem {
             int A = 0, B = 0, C = 0, D = 0;
 
             StringBuffer commands = new StringBuffer();
-            System.out.println("T:"+0+" HP:"+Hd+" DA:"+Ad+" KH:"+Hk+" KA:"+Ak+" B:"+mB+" DB:"+ mD);
+            System.out.println("T:"+0+" Hd:"+Hd+" Ad:"+Ad+" Hk:"+Hk+" Ak:"+Ak+" B:"+mB+" D:"+mD+" BL:"+BuffLimit+" DL"+DebuffLimit);
 
-            for (int T = 1; T <= TURN_MAX; T++) {
+            for (int T = 1; T < minimumWin; T++) {
                 // Final Blow
                 if (Hk - Ad <= 0) {
                     A++;
                     //Hk -= Ad;
                     commands.append('A');
                     System.out.println("[WIN] T:"+T+" A:"+A+" B:"+B+" C:"+C+" D:"+D+" cmds:"+commands);
+                    minimumWin = T;
                     return T;
                 }
 
@@ -129,17 +133,22 @@ public class ProblemC extends Problem {
                     break;
                 }
 
-                //System.out.println("T:"+T+" HP:"+Hd+" DA:"+Ad+" KH:"+Hk+" KA:"+Ak+" cmds:"+ commands);
+                if (commands.toString().endsWith("CC")) {
+                    System.out.println("[IMPOSSIBLE] CC");
+                    break;
+                }
+
+                // Log Pumping!!
+                //System.out.println("T:"+T+" Hd:"+Hd+" Ad:"+Ad+" Hk:"+Hk+" Ak:"+Ak+" cmds:"+ commands);
             }
 
             return TURN_IMPOSSIBLE;
         }
 
         String solve() {
-            int B = findOptimalBuff();
             int Tmin = TURN_IMPOSSIBLE;
-
-            if (B < TURN_MAX) {
+            if (!isImpossible()) {
+                int B = findOptimalBuff();
                 int dLimit = findDebuffLimit();
                 for (int D=0;D<=dLimit;D++) {
                     int T = simulate(B, D);
@@ -147,7 +156,7 @@ public class ProblemC extends Problem {
                 }
             }
 
-            if (Tmin<=TURN_MAX) {
+            if (Tmin<TURN_IMPOSSIBLE) {
                 return String.valueOf(Tmin);
             } else {
                 return "IMPOSSIBLE";
