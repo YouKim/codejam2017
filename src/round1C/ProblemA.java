@@ -57,7 +57,7 @@ public class ProblemA extends Problem {
             Collections.sort(sides, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
-                    return (int) (o2.side - o1.side);
+                    return (int) (Math.sqrt(o2.side) - Math.sqrt(o1.side));
                 }
             });
 
