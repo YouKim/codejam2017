@@ -17,7 +17,7 @@ public class ProblemA extends Problem {
 
         Pancakes cakes = new Pancakes(in);
         double result = cakes.solve();
-        out.printf("Case #%d:%f\n", testNumber, result);
+        out.printf("Case #%d: %f\n", testNumber, result);
     }
 
     static class Pancakes {
@@ -27,7 +27,6 @@ public class ProblemA extends Problem {
 
         ArrayList<Cake> cakes;
         ArrayList<Cake> sides;
-        ArrayList<Cake> totals;
 
         Pancakes(InputReader in) {
             N = in.nextInt();
@@ -35,7 +34,6 @@ public class ProblemA extends Problem {
 
             cakes = new ArrayList<>();
             sides = new ArrayList<>();
-            totals = new ArrayList<>();
 
             for (int i=0;i<N;i++) {
                 int Ri = in.nextInt();
@@ -44,7 +42,6 @@ public class ProblemA extends Problem {
                 Cake cake = new Cake(Ri, Hi);
                 cakes.add(cake);
                 sides.add(cake);
-                totals.add(cake);
             }
         }
 
@@ -52,58 +49,53 @@ public class ProblemA extends Problem {
             Collections.sort(cakes, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
-                    return o1.r - o2.r;
+                    return (int) (o2.r - o1.r);
                 }
             });
 
             Collections.sort(sides, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
-                    return o1.side - o2.side;
+                    return (int) (o2.side - o1.side);
                 }
             });
 
-            Collections.sort(totals, new Comparator<Cake>() {
-                @Override
-                public int compare(Cake o1, Cake o2) {
-                    return o1.total - o2.total;
-                }
-            });
 
-            return 0;
+            long maximumArea = 0;
+
+            while (cakes.size() >= K) {
+
+                long area = 0;
+
+                Cake bottom = cakes.remove(0);
+                sides.remove(bottom);
+
+                area += bottom.total;
+
+                for (int i=0;i+1<K;i++) {
+                    Cake stack = sides.get(i);
+                    area += stack.side;
+                }
+
+                if (maximumArea < area) {
+                    maximumArea = area;
+                }
+            }
+
+            return maximumArea * 3.141592653589793238;
         }
 
         class Cake {
-            int r;
-            int h;
-            int side;
-            int total;
-            double topArea;
-            double sideArea;
+            long r;
+            long h;
+            long side;
+            long total;
 
-            Cake(int r, int h) {
+            Cake(long r, long h) {
                 this.r = r;
                 this.h = h;
-                side = r * h;
+                side = 2 * r * h;
                 total = r * ( r + h * 2);
-                topArea = getTopArea();
-                sideArea = getSideArea();
-            }
-
-            boolean isSideisBigger() {
-                return (2 * h) > r;
-            }
-
-            double getTotalArea() {
-               return (r + 2 * h) * r * Math.PI;
-            }
-
-            double getSideArea() {
-                return 2 * h * r * Math.PI;
-            }
-
-            double getTopArea() {
-                return r * r * Math.PI;
             }
         }
     }
