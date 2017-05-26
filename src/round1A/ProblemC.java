@@ -19,160 +19,136 @@ public class ProblemC extends Problem {
     }
 
     static class Game {
-        final long mHD, mAD, mHK, mAK, mB, mD;
-        int mOptA, mOptB, mOptC, mOptD;
-
         static final int TURN_MAX = 100;
         static final int TURN_IMPOSSIBLE = TURN_MAX + 5;
 
+        final int mHd, mAd, mHk, mAk, mB, mD;
+
         Game(InputReader in) {
-            mHD = in.nextInt();
-            mAD = in.nextInt();
-            mHK = in.nextInt();
-            mAK = in.nextInt();
+            mHd = in.nextInt();
+            mAd = in.nextInt();
+            mHk = in.nextInt();
+            mAk = in.nextInt();
             mB = in.nextInt();
             mD = in.nextInt();
-
-            findOptimalAB();
-            findOptimalCD();
         }
 
-        void findOptimalAB() {
+        int findOptimalBuff() {
 
             if (mB <= 0) {
-                mOptA = attackCount(mHK, mAD);
-                mOptB = 0;
-
-                System.out.println("findOptimalAB  A:" + mOptA + " " + mHK + "(HP) " + mAD + "X" + mOptA + "=" + (mAD*mOptA));
+                return 0;
             } else {
-                int minA = TURN_IMPOSSIBLE;
-                int minB = TURN_IMPOSSIBLE;
-                int minAB = TURN_MAX;
+                int optB = TURN_IMPOSSIBLE;
+                int minAB = TURN_IMPOSSIBLE;
 
                 for (int B=0;B<minAB;B++) {
-                    int A = attackCount(mHK, mAD + mB * B);
+                    int A = attackCount(mHk, mAd + mB * B);
                     if (A + B < minAB) {
                         minAB = A + B;
-                        minA = A;
-                        minB = B;
+                        optB = B;
                     }
                 }
 
-                mOptA = minA;
-                mOptB = minB;
-
-                System.out.println("findOptimalAB  A:" + mOptA + " B:" + mOptB  + " " + mHK + "(HP) " + (mAD+mB*mOptB) + "X" + mOptA + "=" + ((mAD+mB*mOptB)*mOptA));
+                return optB;
             }
         }
 
-        void findOptimalCD() {
-
-            int minCD = 100 - (mOptA + mOptB) + 1;
-            int minC = TURN_IMPOSSIBLE;
-            int minD = TURN_IMPOSSIBLE;
-
-            int maxTurn = TURN_MAX;
-
-            for (int debuff_limit=0;debuff_limit<minCD;debuff_limit++) {
-
-                long hd = mHD, ad = mAD, hk = mHK, ak = mAK;
-                int A = 0, B = 0, C = 0, D = 0;
-
-                StringBuffer commands = new StringBuffer();
-                System.out.println("T:" + 0 + " HP:" + hd + " DA:" + ad + " KH:" + hk + " KA:" + ak + " B:" + mB + " DB:" + mD);
-
-                for (int T=1;T<=maxTurn;T++) {
-
-                    long ak_debuffed = ak;
-                    if (D < debuff_limit) {
-                        ak_debuffed = ak - mD;
-                        if (ak_debuffed < 0) {
-                            ak_debuffed = 0;
-                        }
-                    }
-
-                    if (hk - ad <= 0) {
-                        A++;
-                        hk -= ad;
-                        commands.append('A');
-                    } else if (hd - ak_debuffed <= 0) {
-                        //cure
-                        C++;
-                        hd = mHD;
-                        commands.append('C');
-                    } else {
-                        if (D < debuff_limit && ak > 0 && mD > 0) {
-                            D++;
-                            ak = ak_debuffed;
-                            commands.append('D');
-                        } else if (B < mOptB) {
-                            B++;
-                            ad += mB;
-                            commands.append('B');
-                        } else {
-                            A++;
-                            hk -= ad;
-                            commands.append('A');
-                        }
-                    }
-
-                    if (hk <= 0) {
-                        System.out.println("[WIN] T:" + T + " A:" + A + " B:" + B + " C:" + C + " D:" + D + " cmds:" + commands);
-                        if (C + D < minCD) {
-                            minCD = C + D;
-                            minC = C;
-                            minD = D;
-                        }
-                        break;
-                    } else {
-                        // Knight's turn.
-                        hd -= ak;
-
-                        if (hd <= 0) {
-                            System.out.println("[LOST] T:" + T + " cmds:" + commands);
-                            break;
-                        }
-
-                        if (commands.toString().endsWith("CC")) {
-                            System.out.println("[IMPOSIBLE] CC");
-                            break;
-                        }
-
-                        if (mOptA+mOptB+C+D > TURN_MAX) {
-                            System.out.println("[BUSTED] A+B+C+D > 100");
-                            break;
-                        }
-                    }
-
-                    System.out.println("T:" + T + " HP:" + hd + " DA:" + ad + " KH:" + hk + " KA:" + ak + " cmds:" + commands);
-                }
-
-                if (mD <= 0) {
-                    System.out.println("DEBUFF is 0, no more simulation");
-                    break;
-                }
-            }
-
-            mOptC = minC;
-            mOptD = minD;
-            System.out.println("findOptimalCD  C:" + minC + " D:" +  minD);
-        }
-
-        int attackCount(long hp, long attack) {
-            long result = hp/attack + (hp%attack>0?1:0);
+        int attackCount(int hp, int attack) {
+            int result = hp/attack + (hp%attack>0?1:0);
 
             if (result > TURN_MAX) {
-                return TURN_MAX;
+                return TURN_IMPOSSIBLE;
             }
 
-            return (int) result;
+            return result;
+        }
+
+        int findDebuffLimit() {
+            if (mD <= 0) {
+                return 0;
+            } else {
+                int result = mAk/mD + (mAk%mD>0?1:0);
+                if (result > TURN_MAX) {
+                    return TURN_MAX;
+                }
+                return result;
+            }
+        }
+
+        int simulate(int BuffLimit, int DebuffLimit) {
+
+            int Hd = mHd, Ad = mAd, Hk = mHk, Ak = mAk;
+            int A = 0, B = 0, C = 0, D = 0;
+
+            StringBuffer commands = new StringBuffer();
+            System.out.println("T:"+0+" HP:"+Hd+" DA:"+Ad+" KH:"+Hk+" KA:"+Ak+" B:"+mB+" DB:"+ mD);
+
+            for (int T = 1; T <= TURN_MAX; T++) {
+                // Final Blow
+                if (Hk - Ad <= 0) {
+                    A++;
+                    //Hk -= Ad;
+                    commands.append('A');
+                    System.out.println("[WIN] T:"+T+" A:"+A+" B:"+B+" C:"+C+" D:"+D+" cmds:"+commands);
+                    return T;
+                }
+
+                int Ak_d = Ak;
+                if (D < DebuffLimit) {
+                    Ak_d = Ak - mD;
+                    if (Ak_d < 0) {
+                        Ak_d = 0;
+                    }
+                }
+
+                if (Hd - Ak_d <= 0) {
+                    // cure
+                    C++;
+                    Hd = mHd;
+                    commands.append('C');
+                } else {
+                    if (D < DebuffLimit && Ak > 0 && mD > 0) {
+                        D++;
+                        Ak = Ak_d;
+                        commands.append('D');
+                    } else if (B < BuffLimit) {
+                        B++;
+                        Ad += mB;
+                        commands.append('B');
+                    } else {
+                        A++;
+                        Hk -= Ad;
+                        commands.append('A');
+                    }
+                }
+
+                // Knight's turn.
+                Hd -= Ak;
+                if (Hd <= 0) {
+                    System.out.println("[LOST] T:" + T + " cmds:" + commands);
+                    break;
+                }
+
+                //System.out.println("T:"+T+" HP:"+Hd+" DA:"+Ad+" KH:"+Hk+" KA:"+Ak+" cmds:"+ commands);
+            }
+
+            return TURN_IMPOSSIBLE;
         }
 
         String solve() {
-            int T = mOptA + mOptB + mOptC + mOptD;
+            int B = findOptimalBuff();
+            int Tmin = TURN_IMPOSSIBLE;
 
-            if (T<=TURN_MAX) {
-                return String.valueOf(T);
+            if (B < TURN_MAX) {
+                int dLimit = findDebuffLimit();
+                for (int D=0;D<=dLimit;D++) {
+                    int T = simulate(B, D);
+                    Tmin = Math.min(Tmin, T);
+                }
+            }
+
+            if (Tmin<=TURN_MAX) {
+                return String.valueOf(Tmin);
             } else {
                 return "IMPOSSIBLE";
             }
