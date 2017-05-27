@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class ProblemD extends Problem {
+public class ProblemD extends Qulification {
 
     public ProblemD() {
         mAlpha = "D";
@@ -17,7 +17,7 @@ public class ProblemD extends Problem {
     }
 
     @Override
-    void solveTest(int testNumber, InputReader in, PrintWriter out) {
+    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         int n = in.nextInt();
         int pre = in.nextInt();
 

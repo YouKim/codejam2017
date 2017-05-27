@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-public class ProblemC extends Problem {
+public class ProblemC extends Qulification {
 
     public ProblemC() {
         mAlpha = "C";
@@ -12,7 +12,7 @@ public class ProblemC extends Problem {
     }
 
     @Override
-    void solveTest(int testNumber, InputReader in, PrintWriter out) {
+    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         long stalls = in.nextLong();
         long people = in.nextLong();
 

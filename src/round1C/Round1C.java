@@ -1,6 +1,14 @@
 package round1C;
 
-public class Round1C {
+import jam2017.Problem;
+
+public abstract class Round1C extends Problem{
+
+    @Override
+    protected String getSubfolderName() {
+        return "round1C/";
+    }
+
     public static void main(String[] args) {
         Problem [] problems = {
                 new ProblemA(),

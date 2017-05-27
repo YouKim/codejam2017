@@ -1,6 +1,14 @@
 package qualificationRound;
 
-public class Qulification {
+import jam2017.Problem;
+
+public abstract class Qulification extends Problem {
+
+    @Override
+    protected String getSubfolderName() {
+        return "qualification/";
+    }
+
     public static void main(String[] args) {
         Problem [] problems = {
                 new ProblemA(),

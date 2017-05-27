@@ -2,7 +2,7 @@ package qualificationRound;
 
 import java.io.PrintWriter;
 
-public class ProblemA extends Problem {
+public class ProblemA extends Qulification {
 
     public ProblemA() {
         mAlpha = "A";

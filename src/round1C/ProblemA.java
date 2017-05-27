@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ProblemA extends Problem {
+public class ProblemA extends Round1C {
 
     public ProblemA() {
         mAlpha = "A";
@@ -49,7 +49,7 @@ public class ProblemA extends Problem {
             Collections.sort(cakes, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
-                    return o2.r - o1.r;
+                    return (o2.r > o1.r)?1:(o2.r < o1.r)?-1:0;
                 }
             });
 
@@ -70,8 +70,7 @@ public class ProblemA extends Problem {
                 Cake bottom = cakes.remove(0);
                 sides.remove(bottom);
 
-                area += bottom.r * bottom.r; // Top
-                area += bottom.side;
+                area += bottom.top + bottom.side;
 
                 for (int i=0;i+1<K;i++) {
                     Cake stack = sides.get(i);
@@ -87,14 +86,16 @@ public class ProblemA extends Problem {
         }
 
         class Cake {
-            int r;
-            int h;
+            long r;
+            long h;
             long side;
+            long top;
 
-            Cake(int r, int h) {
-                this.r = r;
-                this.h = h;
+            Cake(int R, int H) {
+                r = R;
+                h = H;
                 side = 2 * r * h;
+                top = r * r;
             }
         }
     }

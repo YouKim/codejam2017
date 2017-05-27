@@ -1,12 +1,8 @@
 package round1C;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 
-public class ProblemB extends Problem {
+public class ProblemB extends Round1C {
 
     public ProblemB() {
         mAlpha = "B";

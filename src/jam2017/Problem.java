@@ -1,4 +1,4 @@
-package round1A;
+package jam2017;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,21 +20,23 @@ public abstract class Problem {
     static final String INPUTFILE_EXT = ".in";
     static final String OUTPUTFILE_EXT = ".out";
 
-    static final String INPUT_FOLDER = "input/round1A/";
-    static final String OUTPUT_FOLDER = "output/round1A/";
+    static final String INPUT_FOLDER = "input/";
+    static final String OUTPUT_FOLDER = "output/";
 
-    static final boolean DEBUG = false;
+    protected static final boolean DEBUG = false;
 
     protected String mAlpha;
     protected String mTitle;
+    protected String mSubFolderName;
 
-    abstract void solveTest(int testNumber, InputReader in, PrintWriter out);
+    protected abstract void solveTest(int testNumber, InputReader in, PrintWriter out);
+    protected abstract String getSubfolderName();
 
     public final void solve() {
         Locale.setDefault(Locale.US);
         try {
             final String regex = mAlpha + INPUT_PATERN;
-            File directory = new File(INPUT_FOLDER);
+            File directory = new File(INPUT_FOLDER + getSubfolderName());
             File[] inputFiles = directory.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -59,7 +61,7 @@ public abstract class Problem {
     public final void processFile(File inputFile) {
 
         String inputFileName = inputFile.getName();
-        String outputFileName = OUTPUT_FOLDER + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
+        String outputFileName = OUTPUT_FOLDER + getSubfolderName() + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
         System.out.println("outputFileName:" + outputFileName);
 
         InputStream inputStream;
@@ -105,7 +107,7 @@ public abstract class Problem {
         }
     }
 
-    static class InputReader {
+    public static class InputReader {
         public BufferedReader reader;
         public StringTokenizer tokenizer;
 

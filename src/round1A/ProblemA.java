@@ -2,7 +2,7 @@ package round1A;
 
 import java.io.PrintWriter;
 
-public class ProblemA extends Problem {
+public class ProblemA extends Round1A {
 
     public ProblemA() {
         mAlpha = "A";

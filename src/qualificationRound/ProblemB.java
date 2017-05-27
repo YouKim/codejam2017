@@ -2,7 +2,7 @@ package qualificationRound;
 
 import java.io.PrintWriter;
 
-public class ProblemB extends Problem {
+public class ProblemB extends Qulification {
 
     public ProblemB() {
         mAlpha = "B";
@@ -10,7 +10,7 @@ public class ProblemB extends Problem {
     }
 
     @Override
-    void solveTest(int testNumber, InputReader in, PrintWriter out) {
+    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         String letters = in.next();
 
         Number number = new Number(letters);
