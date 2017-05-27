@@ -1,4 +1,4 @@
-package round1A;
+package jam2017.round1A;
 
 import java.io.PrintWriter;
 

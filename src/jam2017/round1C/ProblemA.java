@@ -1,4 +1,4 @@
-package round1C;
+package jam2017.round1C;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

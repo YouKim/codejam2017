@@ -1,4 +1,4 @@
-package qualificationRound;
+package jam2017.qualificationRound;
 
 import java.io.PrintWriter;
 
