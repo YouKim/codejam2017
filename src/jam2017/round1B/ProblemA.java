@@ -1,9 +1,6 @@
 package jam2017.round1B;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class ProblemA extends Round1B {
 
@@ -15,7 +12,7 @@ public class ProblemA extends Round1B {
     @Override
     protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         CruiseControl cc = new CruiseControl(in);
-        double result = cc.solve();
+        double result = cc.solve(in);
         out.printf("Case #%d: %f\n", testNumber, result);
     }
 
@@ -24,53 +21,29 @@ public class ProblemA extends Round1B {
         int D;
         int N;
 
-        ArrayList<Horse> horses;
-
         public CruiseControl(InputReader in) {
             D = in.nextInt();
             N = in.nextInt();
+        }
 
-            horses = new ArrayList<>();
+        double solve(InputReader in) {
+
+            double slowest = 0;
 
             for (int i=0;i<N;i++) {
                 int P = in.nextInt();
                 int speed = in.nextInt();
-                int distance = D - P;
+                double distance = D - P;
+                double time = distance / speed;
 
-                Horse horse = new Horse(distance, speed);
-                horses.add(horse);
-            }
-        }
-
-        double solve() {
-            Collections.sort(horses, new Comparator<Horse>() {
-                @Override
-                public int compare(Horse o1, Horse o2) {
-                    return (o2.time > o1.time)?1:(o2.time < o1.time)?-1:0;
+                if (time > slowest) {
+                    slowest = time;
                 }
-            });
+            }
 
-            Horse slowest = horses.get(0);
-            double time = slowest.time;
-            double velocity = D / time;
-
+            double velocity = D / slowest;
             return velocity;
         }
-
-
-        class Horse {
-            double distance;
-            double speed;
-            double time;
-
-            public Horse(int distance, int speed) {
-                this.distance = distance;
-                this.speed = speed;
-
-                time = distance / speed;
-            }
-        }
-
     }
 
 }
