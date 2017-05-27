@@ -49,7 +49,7 @@ public class ProblemA extends Problem {
             Collections.sort(cakes, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
-                    return (int) (o2.r - o1.r);
+                    return o2.r - o1.r;
                 }
             });
 
@@ -70,7 +70,8 @@ public class ProblemA extends Problem {
                 Cake bottom = cakes.remove(0);
                 sides.remove(bottom);
 
-                area += bottom.total;
+                area += bottom.r * bottom.r; // Top
+                area += bottom.side;
 
                 for (int i=0;i+1<K;i++) {
                     Cake stack = sides.get(i);
@@ -86,16 +87,14 @@ public class ProblemA extends Problem {
         }
 
         class Cake {
-            long r;
-            long h;
+            int r;
+            int h;
             long side;
-            long total;
 
-            Cake(long r, long h) {
+            Cake(int r, int h) {
                 this.r = r;
                 this.h = h;
                 side = 2 * r * h;
-                total = r * ( r + h * 2);
             }
         }
     }
