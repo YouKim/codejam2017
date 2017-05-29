@@ -96,57 +96,5 @@ public class ProblemA extends Round1C {
 
             return maximumArea * Math.PI;
         }
-
-        /* another solution. keep K-1 stack of cakes on top of base pancake.
-        double solve2() {
-            Collections.sort(cakes, new Comparator<Cake>() {
-                @Override
-                public int compare(Cake o1, Cake o2) {
-                    return (o2.r > o1.r)?1:(o2.r < o1.r)?-1:0;
-                }
-            });
-
-            Collections.sort(sides, new Comparator<Cake>() {
-                @Override
-                public int compare(Cake o1, Cake o2) {
-                    return (o2.side > o1.side)?1:(o2.side < o1.side)?-1:0;
-                }
-            });
-
-            ArrayList<Cake> stacks = new ArrayList<>();
-            long stackedSide = 0;
-
-            for (int i=0;i+1<K;i++) {
-                Cake stack = sides.remove(0);
-                stacks.add(stack);
-                stackedSide += stack.side;
-            }
-
-            long maximumArea = 0;
-
-            while (cakes.size() >= K) {
-
-                Cake bottom = cakes.remove(0);
-                sides.remove(bottom);
-
-                boolean removed = stacks.remove(bottom);
-                if (removed) {
-                    stackedSide -= bottom.side;
-                    Cake newCake = sides.remove(0);
-
-                    stacks.add(newCake);
-                    stackedSide += newCake.side;
-                }
-
-                long area = bottom.top + bottom.side + stackedSide;
-
-                if (maximumArea < area) {
-                    maximumArea = area;
-                }
-            }
-
-            return maximumArea * Math.PI;
-        }
-        */
     }
 }
