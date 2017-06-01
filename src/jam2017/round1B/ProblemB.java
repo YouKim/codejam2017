@@ -15,86 +15,108 @@ public class ProblemB extends Round1B {
     @Override
     protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
         Neighbors neighbors = new Neighbors(in);
-        String result = neighbors.solve(in);
+        String result = neighbors.solve();
+
+        System.out.println(result);
         out.printf("Case #%d: %s\n", testNumber, result);
     }
 
     static class Neighbors {
+        static final char R='R', O='O', Y='Y', G='G', B='B', V='V';
 
         static final String IMPOSSIBLE = "IMPOSSIBLE";
-        static char [] COLOR = {'R', 'O', 'Y', 'G', 'B', 'V'};
+        static final char [] COLOR = {R, O, Y, G, B, V};
+        static final int COLORS = 6; //COLOR.length;
 
-        class Unicorn {
-            char hair;
+        class Unicorns {
+            char color;
             int heads;
 
-            Unicorn(char hair, int heads) {
-                this.hair = hair;
+            Unicorns(char color, int heads) {
+                this.color = color;
                 this.heads = heads;
             }
         }
 
         int N;
-
-        ArrayList<Unicorn> unicorns;
-        ArrayList<Unicorn> mixeds;
+        int [] H;
 
         Neighbors(InputReader in) {
             N = in.nextInt();
+            H = new int[COLORS];
 
-            unicorns = new ArrayList<>();
-            mixeds = new ArrayList<>();
-
-            for (int i=0;i<3;i++) {
-                Unicorn unicorn = new Unicorn(COLOR[i*2], in.nextInt());
-                unicorns.add(unicorn);
-                Unicorn mixed = new Unicorn(COLOR[i*2+1], in.nextInt());
-                mixeds.add(mixed);
+            for (int i=0;i<COLORS;i++) {
+                H[i] = in.nextInt();
             }
         }
 
-        public String solve(InputReader in) {
+        public String solve() {
+            // Check if it is possible. R>Y+B, Y>R+B B>R+Y
 
-            Collections.sort(unicorns, new Comparator<Unicorn>() {
+            boolean mixed = (H[1]+H[3]+H[5]>0);
+
+            if (mixed) {
+                for (int i=1;i<COLORS;i+=2) {
+                    if (H[i] > 0) {
+                        if (H[i] > H[(i+3)%COLORS]) {
+                            return IMPOSSIBLE;
+                        } else if (H[i] == H[(i+3)%COLORS]) {
+                            if (H[(i+1)%COLORS] + H[(i+2)%COLORS]
+                                    + H[(i+4)%COLORS] + H[(i+5)%COLORS] > 0) {
+                                return IMPOSSIBLE;
+                            }
+                        }
+                    }
+                }
+
+                for (int i=0;i<COLORS;i+=2) {
+                    H[i] = H[i] - H[(i+3)%COLORS];
+                }
+            }
+
+            for (int i=0;i<COLORS;i+=2) {
+                if (H[i] > H[(i+2)%COLORS] + H[(i+4)%COLORS]) {
+                    return IMPOSSIBLE;
+                }
+            }
+
+            ArrayList<Unicorns> unicorns = new ArrayList<>();
+            for (int i=0;i<COLORS;i++) {
+                if (H[i]>0) {
+                    unicorns.add(new Unicorns(COLOR[i], H[i]));
+                }
+            }
+
+            Collections.sort(unicorns, new Comparator<Unicorns>() {
                 @Override
-                public int compare(Unicorn o1, Unicorn o2) {
-                    return (o2.heads > o1.heads)?1:(o2.heads < o1.heads)?-1:0;
+                public int compare(Unicorns u1, Unicorns u2) {
+                    return (u2.heads > u1.heads)?1:(u2.heads < u1.heads)?-1:0;
                 }
             });
 
-            String result = solve();
+            int [] h = new int[3];
+            char [] c = new char[3];
 
-            System.out.println(result.toString());
-            return result.toString();
-        }
-
-        private String solve() {
-
-            int [] c = new int[3];
-            char [] h = new char[3];
-
-            for (int i=0;i<3;i++) {
-                Unicorn unicorn = unicorns.get(i);
-                c[i] = unicorn.heads;
-                h[i] = unicorn.hair;
+            for (int i=0, j=0;i<unicorns.size();i++) {
+                Unicorns unicorn = unicorns.get(i);
+                char C = unicorn.color;
+                if (C == R||C == Y||C == B) {
+                    h[j] = unicorn.heads;
+                    c[j] = unicorn.color;
+                    j++;
+                }
             }
 
-            if ((c[0]>c[1]+c[2])
-                    || (c[1]>c[1]+c[0])
-                    || (c[2]>c[0]+c[1])) {
-                return IMPOSSIBLE;
-            }
-
-            int total = c[0]+c[1]+c[2];
+            int total = h[0]+h[1]+h[2];
 
             char [] stalls = new char[total];
 
             for (int b=0;b<2;b++) {
-                for (int i=b;i<stalls.length;i+=2) {
+                for (int i=b;i<total;i+=2) {
                     for (int j=0;j<3;j++) {
-                        if (c[j] > 0) {
-                            stalls[i] = h[j];
-                            c[j]--;
+                        if (h[j] > 0) {
+                            stalls[i] = c[j];
+                            h[j]--;
                             break;
                         }
                     }
@@ -102,8 +124,24 @@ public class ProblemB extends Round1B {
             }
 
             String result = String.valueOf(stalls);
+
+            if (mixed) {
+                String oneMixed[] = {null, "BO", null, "RG", null, "YV"};
+                String replaceSource[] = {null, "B", null, "R", null, "Y"};
+                String replaceTarget[] = {null, "BOB", null, "RGR", null, "YVY",};
+
+                for (int i=1;i<COLORS;i+=2) {
+                    for (int j=0;j<H[i];j++) {
+                       if (result.isEmpty()) {
+                           result = oneMixed[i];
+                       } else {
+                           result = result.replaceFirst(replaceSource[i], replaceTarget[i]);
+                       }
+                    }
+                }
+            }
+
             return result;
         }
-
     }
 }
