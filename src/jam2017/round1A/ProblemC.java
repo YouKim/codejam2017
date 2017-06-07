@@ -22,55 +22,65 @@ public class ProblemC extends Round1A {
         static final String IMPOSSIBLE = "IMPOSSIBLE";
         static final int TURN_IMPOSSIBLE = Integer.MAX_VALUE;
 
-        final int mHd, mAk, mD, mAB, mDmax;
+        InputReader in;
 
         Game(InputReader in) {
-            int Ad, Hk, B;
-
-            mHd = in.nextInt();
-            Ad = in.nextInt();
-            Hk = in.nextInt();
-            mAk = in.nextInt();
-            B = in.nextInt();
-            mD = in.nextInt();
-
-            mAB = findMinAB(Ad, Hk, B);
-            mDmax = Ceil(mAk, mD);
-
-            System.out.println("mDmax:"+(mAB+mDmax)+" Hd:"+mHd+" Ad:"+Ad+" Hk:"+Hk+" Ak:"+mAk+" B:" + B + " D:" + mD);
+            this.in = in;
         }
 
-        int findMinAB(int Ad, final int Hk, final int Buff) {
+        String solve() {
+            final int Hd = in.nextInt(), Ad = in.nextInt(), Hk = in.nextInt(), Ak = in.nextInt();
+            final int Buff = in.nextInt(), Debuff = in.nextInt();
+
+            int AB = calcAB(Ad, Hk, Buff);
+
+            return IMPOSSIBLE;
+        }
+
+
+        int calcAB(int Ad, final int Hk, final int Buff) {
             if (Buff <= 0) {
-                return Ceil(Hk, Ad);
+                return ceil(Hk, Ad);
             } else {
                 double result = (Math.sqrt(Hk) * Math.sqrt(Buff) - Ad ) / Buff;
                 //System.out.println("findMinAB by derivative:" + result);
 
-                int start;
-                if (result < 0) {
-                    start = 0;
-                } else {
-                    start = (int) result;
-                }
+                int start = (result < 0)?0:((int) result);
 
                 int minAB = TURN_IMPOSSIBLE;
                 for (int B=start;B<Hk;B++) {
-                    int A = Ceil(Hk, Ad + B*Buff);
-                    //System.out.println("findMinAB B: " + B + " A+B:" + (A+B));
+                    int AB = ceil(Hk, Ad + B*Buff) + B;
+                    //System.out.println("calcAB B:" + B + " A+B:" + AB);
 
-                    if (A + B < minAB) {
-                        minAB = A + B;
-                    } else if (A + B > minAB) {
+                    if (AB < minAB) {
+                        minAB = AB;
+                    } else if (AB > minAB) {
                         break;
                     }
                 }
-                //System.out.println("B:"+B);
-                System.out.println("findMinAB :" + minAB);
+
+                System.out.println("calcAB :" + minAB);
                 return minAB;
             }
         }
 
+        int ceil(int X, int Y) {
+            if (Y<=0) {
+                return Integer.MAX_VALUE;
+            }
+
+            return X/Y + (X%Y>0?1:0);
+        }
+
+        int floor(int X, int Y) {
+            if (Y<=0) {
+                return Integer.MAX_VALUE;
+            }
+
+            return X/Y;
+        }
+
+        /*
         public String solve() {
             // TODO Auto-generated method stub
 
@@ -97,6 +107,7 @@ public class ProblemC extends Round1A {
                 return IMPOSSIBLE;
             }
         }
+
 
         static int Ceil(int A, int B) {
             if (B<=0) {
@@ -169,7 +180,7 @@ public class ProblemC extends Round1A {
 
                     cure = true;
 
-                    /*
+
                     if (D >= Dcnt) {
                         int Cint = Floor(mHd, Ak);
 
@@ -185,7 +196,6 @@ public class ProblemC extends Round1A {
                         int total = T + AB + C;
                         return total;
                     }
-                    */
 
                 } else {
                     cure = false;
@@ -208,7 +218,7 @@ public class ProblemC extends Round1A {
             return TURN_IMPOSSIBLE;
         }
 
-
+        */
         /*
 
         // Maximum value will be 100 in small or 10^9 in large
