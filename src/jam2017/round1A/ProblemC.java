@@ -44,18 +44,29 @@ public class ProblemC extends Round1A {
             if (Buff <= 0) {
                 return Ceil(Hk, Ad);
             } else {
+                double result = (Math.sqrt(Hk) * Math.sqrt(Buff) - Ad ) / Buff;
+                //System.out.println("findMinAB by derivative:" + result);
+
+                int start;
+                if (result < 0) {
+                    start = 0;
+                } else {
+                    start = (int) result;
+                }
+
                 int minAB = TURN_IMPOSSIBLE;
-                for (int B=0;B<Hk;B++) {
-                    int A = Ceil(Hk, Ad);
+                for (int B=start;B<Hk;B++) {
+                    int A = Ceil(Hk, Ad + B*Buff);
+                    //System.out.println("findMinAB B: " + B + " A+B:" + (A+B));
+
                     if (A + B < minAB) {
                         minAB = A + B;
-                    } else {
+                    } else if (A + B > minAB) {
                         break;
                     }
-
-                    Ad += Buff;
                 }
                 //System.out.println("B:"+B);
+                System.out.println("findMinAB :" + minAB);
                 return minAB;
             }
         }
@@ -64,6 +75,7 @@ public class ProblemC extends Round1A {
             // TODO Auto-generated method stub
 
             int minT = Integer.MAX_VALUE;
+
 
             if (mDmax == 0) {
                 minT = simulateD(0);//sumulateNoDebuff();
@@ -77,6 +89,7 @@ public class ProblemC extends Round1A {
                     }
                 }
             }
+
 
             if (minT<Integer.MAX_VALUE) {
                 return String.valueOf(minT);
