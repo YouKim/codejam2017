@@ -2,6 +2,7 @@ package jam2017.round1A;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ProblemC extends Round1A {
 
@@ -24,11 +25,13 @@ public class ProblemC extends Round1A {
         static final int TURN_IMPOSSIBLE = -1;
 
         final int TN, HD, AD, HK, AK, BUFF, DEBUFF;
+        ArrayList<Integer> debuffMap;
 
         Game(int testCNumber, InputReader in) {
             TN = testCNumber;
             HD = in.nextInt(); AD = in.nextInt(); HK = in.nextInt(); AK = in.nextInt();
             BUFF = in.nextInt(); DEBUFF = in.nextInt();
+            debuffMap = new ArrayList<>();
         }
 
         private String solve() {
@@ -36,7 +39,6 @@ public class ProblemC extends Round1A {
             int AB = calcAB(AD, HK, BUFF);
             int Dmax = DEBUFF>0?ceil(AK, DEBUFF):0;
 
-            ArrayList<Integer> debuffMap = new ArrayList<>();
             for (int D=0;D<=Dmax;) {
                 debuffMap.add(D);
                 int cureInterval = floor(HD-1, AK-D*DEBUFF);
@@ -44,20 +46,42 @@ public class ProblemC extends Round1A {
                 int nextD = ceil(AK - targetAttack, DEBUFF);
 
                 //System.out.printf("debuffMap %d %d %d HD:%d AK:%d DEBUFF:%d\n", I, targetAttack, newD, HD, AK, DEBUFF);
-                if (nextD <= D) {
+                if (AK-D*DEBUFF <= 0 || nextD <= D) {
                     break;
                 }
 
                 D = nextD;
             }
 
-            int Tmin = Integer.MAX_VALUE;
+            long Tmin = Long.MAX_VALUE;
+            State.reset();
 
-            for (int i=0;i<debuffMap.size();i++) {
-                int D = debuffMap.get(i);
-                int T = simulate(HD, AK, AB, D);
-                if (T>0 && T<Tmin) {
-                    Tmin = T;
+            long T = 1;
+            int d = 0, Hd = HD, Ak = AK;
+            for (int D=0;D>=0;) {
+
+                //System.out.printf("T %d d %d Hd %d Ak:%d D:%d\n", T, d, Hd, Ak, D);
+
+                long total = simulate(T, d, Hd, Ak, AB, D);
+                if (total>0) {
+                    if (total<Tmin) {
+                        Tmin = total;
+                    }
+                }
+                D = getNextD(D);
+
+                State saved = State.getLargest();
+                if (saved != null) {
+                    T = saved.T;
+                    Ak = saved.Ak;
+                    Hd = saved.Hd;
+                    d = State.getLargestD();
+                    //System.out.printf("3 Hd %d Ak %d D %d T %d\n", Hd, Ak, d, T);
+                } else {
+                    T = 1;
+                    Ak = AK;
+                    Hd = HD;
+                    d = 0;
                 }
             }
 
@@ -68,38 +92,80 @@ public class ProblemC extends Round1A {
             }
         }
 
-        private int simulate(int Hd, int Ak, int AB, int D) {
+        private long simulate(long T, int D, int Hd, int Ak, int AB, int Dmax) {
 
-            for (int T=1;AB>0;) {
+            //int C=0;
+
+            while (AB>0) {
                 if (AB <= 1) {
+                    //System.out.printf("C %d D %d CD %d\n", C, Dmax, C+Dmax);
                     return T;
                 }
 
-                if (Hd - Ak + (D>0?DEBUFF:0) <= 0) {
+                if (Hd - Ak + (D==Dmax?0:DEBUFF) <= 0) {
                     Hd = HD - Ak;
 
-                    int cureInterval = floor(HD-1, Ak);
+                    int cureInterval = floor(Hd-1, Ak);
 
-                    if (cureInterval < 2) {
+                    if (cureInterval < 1) {
                         return TURN_IMPOSSIBLE;
                     }
-                    T++;
+
+                    //C++;
+
+
+                    if (D == Dmax) {
+                        int c = floor2(AB-1, cureInterval);
+                        //System.out.printf("C %d AB %d HD %d Ak:%d \n", C, AB, HD, Ak);
+                        //C += c;
+                        //System.out.printf("C %d D %d CD %d\n", C, Dmax, C+Dmax);
+                        return T+AB+c;
+                    } else {
+                        T++;
+                        int Dnext = getNextD(D) - 1;
+                        if (Dnext > D) {
+
+                            Dnext = Math.min(Dmax-1, Dnext);
+
+                            int delta = Dnext - D;
+
+                            delta = (delta - delta%cureInterval);
+
+                            if (delta > 0) {
+
+                                int c = floor(delta, cureInterval) ;
+
+                                //System.out.printf("Dnext %d Dmax %d D %d Delta %d C %d DEBUFF %d cureInterval %d", Dnext, Dmax, D, delta, c, DEBUFF, cureInterval);
+                                //System.out.printf(" AK %d -> AK %d\n", Ak, Ak - delta * DEBUFF);
+                                Ak = Ak - delta * DEBUFF;
+                                Hd = HD - Ak;
+                                D += delta;
+                                T += (delta + c);
+                                //C += c;
+                                State.put(D, T, Ak, Hd);
+                                //System.out.printf("1 Hd %d Ak %d D %d T %d\n", Hd, Ak, D, T);
+                            }
+                        }
+                    }
+
+
                 } else {
 
-                    if (D > 0) {
-                        int left = calcPossibleDebuff(Hd, Ak);
-                        left = Math.min(D, left);
-                        D-=left;
-                        //Hd = Hd - left*Ak + DEBUFF;
-                        Hd = Hd - (left*Ak - ((left+1) * left * DEBUFF)/2);
-                        Ak -= (left * DEBUFF);
-                        T+=left;
+                    if (D < Dmax) {
+                        int d = calcPossibleDebuff(Hd, Ak, Dmax-D);
+                        Hd = Hd - (d*Ak - ((d+1) * d * DEBUFF)/2);
+                        Ak -= (d * DEBUFF);
+                        D += d;
+                        T += d;
+
+                        State.put(D, T, Ak, Hd);
                     } else {
-                        int left = floor(Hd-1, Ak);
-                        left = Math.min(AB-1, left);
-                        AB -= left;
-                        Hd = Hd - left*Ak;
-                        T+=left;
+                        int ab = floor(Hd-1, Ak);
+                        ab = Math.min(AB-1, ab);
+                        Hd = Hd - ab*Ak;
+
+                        AB -= ab;
+                        T += ab;
                     }
 
                     if (Hd <= 0) {
@@ -109,6 +175,17 @@ public class ProblemC extends Round1A {
             }
 
             return TURN_IMPOSSIBLE;
+        }
+
+        private int getNextD(int D) {
+            for (int i=0;i<debuffMap.size();i++) {
+                int d = debuffMap.get(i);
+                if (d > D) {
+                    return d;
+                }
+            }
+
+            return -1;
         }
 
         private int calcAB(int Ad, final int Hk, final int Buff) {
@@ -132,16 +209,15 @@ public class ProblemC extends Round1A {
             }
         }
 
-
-        private int calcPossibleDebuff(int Hd, int Ak) {
+        private int calcPossibleDebuff(int Hd, int Ak, int Dmax) {
             if (Ak-DEBUFF <= 0) {
                 return 1;
             }
 
             int start = floor(Hd-1, Ak-DEBUFF);
-            int end = ceil(AK, DEBUFF);
+            int end = Dmax;
 
-            int result = start;
+            int result = start>Dmax?Dmax:start;
 
             for (int i=start+1;i<=end;i++) {
                 if (Hd - (i*Ak - ((i+1) * i * DEBUFF)/2) > 0) {
@@ -168,6 +244,62 @@ public class ProblemC extends Round1A {
             }
 
             return x/y;
+        }
+
+        private int floor2(int x, int y) {
+            if (y<=0) {
+                return Integer.MAX_VALUE;
+            }
+
+            return x/y - ((x%y==0)?1:0);
+        }
+
+        static class State {
+            static HashMap<Integer, State> saved = new HashMap<>();
+            static int Dmax = -1;
+
+            long T;
+            int Ak, Hd;
+
+            State(long T, int Ak, int Hd) {
+                this.T = T;
+                this.Ak = Ak;
+                this.Hd = Hd;
+            }
+
+            static void put(int D, long T, int Ak, int Hd) {
+                if (saved.containsKey(D)) {
+                    return;
+                }
+                //System.out.printf("4 Hd %d Ak %d D %d T %d\n", Hd, Ak, D, T);
+
+                if (T <1 || Ak < 0 || Hd < 0) {
+                    System.out.println("!!!!!!!!");
+                    return;
+                }
+
+                saved.put(D, new State(T, Ak, Hd));
+                if (D > Dmax) {
+                    Dmax = D;
+                }
+            }
+
+            static State get(int D) {
+                return saved.get(D);
+            }
+
+            static State getLargest() {
+                return saved.get(Dmax);
+            }
+
+            static int getLargestD() {
+                return Dmax;
+            }
+
+            static void reset() {
+                saved.clear();
+                Dmax = -1;
+            }
         }
 
     }
