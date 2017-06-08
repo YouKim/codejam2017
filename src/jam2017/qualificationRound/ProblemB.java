@@ -1,6 +1,7 @@
 package jam2017.qualificationRound;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProblemB extends Qulification {
 
@@ -10,25 +11,30 @@ public class ProblemB extends Qulification {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        String letters = in.next();
+    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer[] results) {
+        // TODO Auto-generated method stub
+        List<TestCase> tcs = new ArrayList<>();
 
-        Number number = new Number(letters);
-        String result = number.solve();
+        for (int i=1;i<=testCount;i++) {
+            String letters = in.next();
+            Number number = new Number(letters, i, results[i]);
+            tcs.add(number);
+        }
 
-        System.out.printf("TidyNumbers #%d: %s %s\n", testNumber, letters, result);
-        out.printf("Case #%d: %s\n", testNumber, result);
+        return tcs;
     }
 
-    static class Number {
+    static class Number extends TestCase {
 
         private char[] numbers;
 
-        Number(String m) {
+        Number(String m, int testNumber, StringBuffer result) {
+            super(testNumber, result);
             numbers = m.toCharArray();
         }
 
-        String solve() {
+        @Override
+        protected String solve() {
             for (int i=1;i<numbers.length;i++) {
                 if (numbers[i-1] > numbers[i]) {
                     numbers[i-1]--;
@@ -42,8 +48,8 @@ public class ProblemB extends Qulification {
             }
 
             String result = String.valueOf(numbers);
-            return String.valueOf(result.replaceFirst("^0+(?!$)", ""));
+            return String.format("Case #%d: %s\n", testNumber, result.replaceFirst("^0+(?!$)", ""));
         }
-
     }
+
 }

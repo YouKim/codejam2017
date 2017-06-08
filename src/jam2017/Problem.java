@@ -10,8 +10,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 public abstract class Problem {
@@ -23,13 +26,16 @@ public abstract class Problem {
     static final String INPUT_FOLDER = "input/";
     static final String OUTPUT_FOLDER = "output/";
 
+    public static final String IMPOSSIBLE = "IMPOSSIBLE";
+
     protected static final boolean DEBUG = false;
+    static final int POOL_SIZE = 16;
 
     protected String mAlpha;
     protected String mTitle;
     protected String mSubFolderName;
 
-    protected abstract void solveTest(int testNumber, InputReader in, PrintWriter out);
+    protected abstract List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer[] results);
     protected abstract String getSubfolderName();
 
     public final void solve() {
@@ -91,8 +97,30 @@ public abstract class Problem {
 
         try {
             int testCount = Integer.parseInt(in.next());
-            for (int testNumber = 1; testNumber <= testCount; testNumber++) {
-                solveTest(testNumber, in, out);
+
+            List<TestCase> testCases = null;
+            StringBuffer results [] = new StringBuffer[testCount+1];
+
+            for (int i=1;i<=testCount;i++) {
+                results[i] = new StringBuffer();
+            }
+
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(POOL_SIZE);
+            testCases = createTestCase(testCount, in, results);
+
+            for (TestCase tc:testCases) {
+                executor.execute(tc);
+            }
+
+            executor.shutdown();
+
+            while (executor.getActiveCount() > 0) {
+                //System.out.print("active:" + active);
+                Thread.sleep(50);
+            }
+
+            for (int i=1;i<=testCount;i++) {
+                out.printf(results[i].toString());
             }
 
         } catch (Exception e) {
@@ -105,6 +133,24 @@ public abstract class Problem {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static abstract class TestCase implements Runnable {
+
+        protected StringBuffer result;
+        protected int testNumber;
+
+        protected TestCase(int testNumber, StringBuffer result) {
+            this.testNumber = testNumber;
+            this.result = result;
+        }
+
+        @Override
+        public void run() {
+            result.append(solve());
+        }
+
+        protected abstract String solve();
     }
 
     public static class InputReader {

@@ -1,8 +1,8 @@
 package jam2017.round1A;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProblemC extends Round1A {
 
@@ -12,29 +12,36 @@ public class ProblemC extends Round1A {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        Game game = new Game(testNumber, in);
-        String result = game.solve();
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
 
-        System.out.printf("Case #%d: %s\n", testNumber, result);
-        out.printf("Case #%d: %s\n", testNumber, result);
+        List<TestCase> tcs = new ArrayList<>();
+
+        for (int i=1;i<=testCount;i++) {
+            Game game = new Game(in, i, results[i]);
+            tcs.add(game);
+        }
+
+        return tcs;
     }
 
-    static class Game {
-        static final String IMPOSSIBLE = "IMPOSSIBLE";
+    static class Game extends TestCase {
+
         static final int TURN_IMPOSSIBLE = -1;
 
-        final int TN, HD, AD, HK, AK, BUFF, DEBUFF;
+        final int HD, AD, HK, AK, BUFF, DEBUFF;
         ArrayList<Integer> debuffMap;
+        DCache dcache = new DCache();
 
-        Game(int testCNumber, InputReader in) {
-            TN = testCNumber;
+        Game(InputReader in, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             HD = in.nextInt(); AD = in.nextInt(); HK = in.nextInt(); AK = in.nextInt();
             BUFF = in.nextInt(); DEBUFF = in.nextInt();
             debuffMap = new ArrayList<>();
         }
 
-        private String solve() {
+        @Override
+        protected String solve() {
 
             int AB = calcAB(AD, HK, BUFF);
             int Dmax = DEBUFF>0?ceil(AK, DEBUFF):0;
@@ -54,7 +61,6 @@ public class ProblemC extends Round1A {
             }
 
             long Tmin = Long.MAX_VALUE;
-            State.reset();
 
             long T = 1;
             int d = 0, Hd = HD, Ak = AK;
@@ -70,12 +76,12 @@ public class ProblemC extends Round1A {
                 }
                 D = getNextD(D);
 
-                State saved = State.getLargest();
+                State saved = dcache.getLargest();
                 if (saved != null) {
                     T = saved.T;
                     Ak = saved.Ak;
                     Hd = saved.Hd;
-                    d = State.getLargestD();
+                    d = dcache.getLargestD();
                     //System.out.printf("3 Hd %d Ak %d D %d T %d\n", Hd, Ak, d, T);
                 } else {
                     T = 1;
@@ -85,11 +91,14 @@ public class ProblemC extends Round1A {
                 }
             }
 
+            String result;
             if (Tmin > 0 && Tmin < Long.MAX_VALUE) {
-                return String.valueOf(Tmin);
+                result = String.valueOf(Tmin);
             } else {
-                return IMPOSSIBLE;
+                result = IMPOSSIBLE;
             }
+
+            return String.format("Case #%d: %s\n", testNumber, result);
         }
 
         private long simulate(long T, int D, int Hd, int Ak, int AB, int Dmax) {
@@ -137,30 +146,33 @@ public class ProblemC extends Round1A {
 
                                 //System.out.printf("Dnext %d Dmax %d D %d Delta %d C %d DEBUFF %d cureInterval %d", Dnext, Dmax, D, delta, c, DEBUFF, cureInterval);
                                 //System.out.printf(" AK %d -> AK %d\n", Ak, Ak - delta * DEBUFF);
+
+
                                 int Ak_d = Ak - delta * DEBUFF;
                                 Ak = Ak_d<0?0:Ak_d;
                                 Hd = HD - Ak;
                                 D += delta;
                                 T += (delta + c);
                                 //C += c;
-                                State.put(D, T, Ak, Hd);
+                                dcache.put(D, T, Ak, Hd);
+
                                 //System.out.printf("1 Hd %d Ak %d D %d T %d\n", Hd, Ak, D, T);
                             }
                         }
                     }
-
-
                 } else {
 
                     if (D < Dmax) {
                         int d = calcPossibleDebuff(Hd, Ak, Dmax-D);
+
                         Hd = Hd - (d*Ak - ((d+1) * d * DEBUFF)/2);
                         int Ak_d = Ak - d * DEBUFF;
                         Ak = Ak_d<0?0:Ak_d;
                         D += d;
                         T += d;
 
-                        State.put(D, T, Ak, Hd);
+                        dcache.put(D, T, Ak, Hd);
+
                     } else {
                         int ab = floor(Hd-1, Ak);
                         ab = Math.min(AB-1, ab);
@@ -256,20 +268,12 @@ public class ProblemC extends Round1A {
             return x/y - ((x%y==0)?1:0);
         }
 
-        static class State {
-            static HashMap<Integer, State> saved = new HashMap<>();
-            static int Dmax = -1;
 
-            long T;
-            int Ak, Hd;
+        static class DCache {
+            HashMap<Integer, State> saved = new HashMap<>();
+            int Dmax = -1;
 
-            State(long T, int Ak, int Hd) {
-                this.T = T;
-                this.Ak = Ak;
-                this.Hd = Hd;
-            }
-
-            static void put(int D, long T, int Ak, int Hd) {
+            void put(int D, long T, int Ak, int Hd) {
                 if (saved.containsKey(D)) {
                     return;
                 }
@@ -286,21 +290,32 @@ public class ProblemC extends Round1A {
                 }
             }
 
-            static State get(int D) {
+            State get(int D) {
                 return saved.get(D);
             }
 
-            static State getLargest() {
+            State getLargest() {
                 return saved.get(Dmax);
             }
 
-            static int getLargestD() {
+            int getLargestD() {
                 return Dmax;
             }
 
-            static void reset() {
+            void reset() {
                 saved.clear();
                 Dmax = -1;
+            }
+        }
+
+        static class State {
+            long T;
+            int Ak, Hd;
+
+            State(long T, int Ak, int Hd) {
+                this.T = T;
+                this.Ak = Ak;
+                this.Hd = Hd;
             }
         }
 

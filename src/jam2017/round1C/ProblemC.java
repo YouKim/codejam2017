@@ -1,6 +1,6 @@
 package jam2017.round1C;
 
-import java.io.PrintWriter;
+import java.util.List;
 
 public class ProblemC extends Round1C {
 
@@ -10,6 +10,7 @@ public class ProblemC extends Round1C {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
+        return null;
     }
 }

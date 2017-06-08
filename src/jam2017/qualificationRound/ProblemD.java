@@ -1,12 +1,12 @@
 package jam2017.qualificationRound;
 
-import java.io.PrintWriter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class ProblemD extends Qulification {
@@ -17,26 +17,31 @@ public class ProblemD extends Qulification {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        int n = in.nextInt();
-        int pre = in.nextInt();
+    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
 
-        FashionMap map = new FashionMap(n);
+        List<TestCase> tcs = new ArrayList<>();
 
-        for (int i = 0; i < pre; i++) {
-            char model = in.nextChar();
+        for (int i=1;i<=testCount;i++) {
+            int n = in.nextInt();
+            int pre = in.nextInt();
+            FashionMap map = new FashionMap(n, i, results[i]);
 
-            int row = in.nextInt();
-            int col = in.nextInt();
+            for (int j = 0; j < pre; j++) {
+                char model = in.nextChar();
 
-            map.put(row, col, model);
+                int row = in.nextInt();
+                int col = in.nextInt();
+
+                map.put(row, col, model);
+            }
+
+            tcs.add(map);
         }
 
-        String result = map.solve();
-        out.printf("Case #%d: %s", testNumber, result);
+        return tcs;
     }
 
-    static class FashionMap {
+    static class FashionMap extends TestCase {
         static final char O = 'o';
         static final char X = 'x';
         static final char P = '+';
@@ -52,10 +57,12 @@ public class ProblemD extends Qulification {
 
         private int mScore;
 
-        public FashionMap(int size) {
+        public FashionMap(int size, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             mSize = size;
-            mModels = new HashMap<RowCol, Character>();
-            mUpdates = new HashMap<RowCol, Character>();
+            mModels = new HashMap<>();
+            mUpdates = new HashMap<>();
             // index (r/c - 1)
             rowBlocked = new boolean[size+1];
             colBlocked = new boolean[size+1];
@@ -130,7 +137,8 @@ public class ProblemD extends Qulification {
             return true;
         }
 
-        String solve() {
+        @Override
+        protected String solve() {
             Biparted rowcolGraph = new Biparted();
             Biparted diagGraph = new Biparted();
 
@@ -165,7 +173,7 @@ public class ProblemD extends Qulification {
                 update((sum+diff-mSize)/2, (sum-diff+mSize)/2, P);
             }
 
-            return getResult();
+            return String.format("Case #%d: %s", testNumber, getResult());
         }
 
         String getResult() {
@@ -227,10 +235,10 @@ public class ProblemD extends Qulification {
         private ArrayList<Entry<Integer, Integer>> results;
 
         Biparted() {
-            leftNodes = new HashMap<Integer, LNode>();
-            rightNodes = new HashMap<Integer, Node>();
-            sortedLeftNodes = new ArrayList<LNode>();
-            results = new ArrayList<Entry<Integer, Integer>>();
+            leftNodes = new HashMap<>();
+            rightNodes = new HashMap<>();
+            sortedLeftNodes = new ArrayList<>();
+            results = new ArrayList<>();
         }
 
         void addEdge(int l, int r) {
@@ -273,7 +281,7 @@ public class ProblemD extends Qulification {
                         if (!right.isConnected()) {
                             left.connect(right);
                             //System.out.println("Connected : " + left.mIndex + " " + right.mIndex);
-                            results.add(new AbstractMap.SimpleEntry<Integer, Integer>(left.mIndex, right.mIndex));
+                            results.add(new AbstractMap.SimpleEntry<>(left.mIndex, right.mIndex));
                             break;
                         }
                     }

@@ -1,6 +1,7 @@
 package jam2017.qualificationRound;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProblemA extends Qulification {
 
@@ -10,25 +11,28 @@ public class ProblemA extends Qulification {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        String cakes = in.next();
-        int n = in.nextInt();
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
 
-        if (DEBUG) System.out.println("cakes:" + cakes + ", " + n);
+        List<TestCase> tcs = new ArrayList<>();
 
-        Pancake cake = new Pancake(cakes, n);
-        String result = cake.solve();
+        for (int i=1;i<=testCount;i++) {
+            String cakes = in.next();
+            int n = in.nextInt();
 
-        System.out.printf("Cakes #%d: %s\n", testNumber, result);
-        out.printf("Case #%d: %s\n", testNumber, result);
+            Pancake cake = new Pancake(cakes, n, i, results[i]);
+            tcs.add(cake);
+        }
+
+        return tcs;
     }
 
-    static class Pancake {
+    static class Pancake extends TestCase {
 
         private char[] cakes;
         private int mSize;
 
-        Pancake(String m, int flipSize) {
+        Pancake(String m, int flipSize, int testNumber, StringBuffer result) {
+            super(testNumber, result);
             cakes = m.toCharArray();
             mSize = flipSize;
         }
@@ -46,19 +50,21 @@ public class ProblemA extends Qulification {
             return true;
         }
 
-        String solve() {
+        @Override
+        protected String solve() {
             int count = 0;
             for (int i=0;i<cakes.length;i++) {
                 if (cakes[i] == '-') {
                     if (flip(i)) {
                         count++;
                     } else {
-                        return "IMPOSSIBLE";
+                        count = -1;
                     }
                 }
             }
+            String result = count<0?IMPOSSIBLE:String.valueOf(count);
 
-            return String.valueOf(count);
+            return String.format("Case #%d: %s\n", testNumber, result);
         }
     }
 }

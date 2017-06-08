@@ -1,9 +1,9 @@
 package jam2017.round1C;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class ProblemA extends Round1C {
 
@@ -13,14 +13,19 @@ public class ProblemA extends Round1C {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
 
-        Pancakes cakes = new Pancakes(in);
-        double result = cakes.solve();
-        out.printf("Case #%d: %f\n", testNumber, result);
+        List<TestCase> tcs = new ArrayList<>();
+
+        for (int i=1;i<=testCount;i++) {
+            Pancakes cakes = new Pancakes(in, i, results[i]);
+            tcs.add(cakes);
+        }
+
+        return tcs;
     }
 
-    static class Pancakes {
+    static class Pancakes extends TestCase {
 
         class Cake {
             long r;
@@ -42,7 +47,9 @@ public class ProblemA extends Round1C {
         ArrayList<Cake> cakes;
         ArrayList<Cake> sides;
 
-        Pancakes(InputReader in) {
+        Pancakes(InputReader in, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             N = in.nextInt();
             K = in.nextInt();
 
@@ -59,7 +66,8 @@ public class ProblemA extends Round1C {
             }
         }
 
-        double solve() {
+        @Override
+        protected String solve() {
             Collections.sort(cakes, new Comparator<Cake>() {
                 @Override
                 public int compare(Cake o1, Cake o2) {
@@ -94,7 +102,7 @@ public class ProblemA extends Round1C {
                 }
             }
 
-            return maximumArea * Math.PI;
+            return String.format("Case #%d: %f\n", testNumber, maximumArea * Math.PI);
         }
     }
 }

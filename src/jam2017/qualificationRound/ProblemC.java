@@ -1,6 +1,7 @@
 package jam2017.qualificationRound;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -12,25 +13,30 @@ public class ProblemC extends Qulification {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        long stalls = in.nextLong();
-        long people = in.nextLong();
+    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
 
-        Stall stall = new Stall(stalls, people);
-        String result = stall.solve();
+        List<TestCase> tcs = new ArrayList<>();
 
-        System.out.printf("Stalls: #%d: %s\n", testNumber, result);
-        out.printf("Case #%d: %s\n", testNumber, result);
+        for (int i=1;i<=testCount;i++) {
+            long stalls = in.nextLong();
+            long people = in.nextLong();
+
+            Stall stall = new Stall(stalls, people, i, results[i]);
+            tcs.add(stall);
+        }
+
+        return tcs;
     }
 
-    static class Stall {
+    static class Stall extends TestCase {
 
         private long mPeople;
         private TreeMap<Long, Long> tiedStalls;
 
-        Stall(long stalls, long people) {
+        Stall(long stalls, long people, int testNumber, StringBuffer result) {
+            super(testNumber, result);
             mPeople = people;
-            tiedStalls = new TreeMap<Long, Long>();
+            tiedStalls = new TreeMap<>();
             add(stalls, 1);
         }
 
@@ -49,7 +55,8 @@ public class ProblemC extends Qulification {
             if (DEBUG) System.out.println("Stall add:" + size + " : " + number);
         }
 
-        String solve() {
+        @Override
+        protected String solve() {
             long located = 0;
             long min = 0;
             long max = 0;
@@ -80,7 +87,7 @@ public class ProblemC extends Qulification {
                 located += number;
             }
 
-            return String.format("%d %d", max, min);
+            return String.format("Case #%d: %d %d\n", testNumber, max, min);
         }
 
     }

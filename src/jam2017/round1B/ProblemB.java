@@ -1,9 +1,9 @@
 package jam2017.round1B;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class ProblemB extends Round1B {
 
@@ -13,18 +13,21 @@ public class ProblemB extends Round1B {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        Neighbors neighbors = new Neighbors(in);
-        String result = neighbors.solve();
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
 
-        System.out.println(result);
-        out.printf("Case #%d: %s\n", testNumber, result);
+        List<TestCase> tcs = new ArrayList<>();
+
+        for (int i=1;i<=testCount;i++) {
+            Neighbors neighbors = new Neighbors(in, i, results[i]);
+            tcs.add(neighbors);
+        }
+
+        return tcs;
     }
 
-    static class Neighbors {
+    static class Neighbors extends TestCase {
         static final char R='R', O='O', Y='Y', G='G', B='B', V='V';
 
-        static final String IMPOSSIBLE = "IMPOSSIBLE";
         static final char [] COLOR = {R, O, Y, G, B, V};
         static final int COLORS = 6; //COLOR.length;
 
@@ -41,7 +44,9 @@ public class ProblemB extends Round1B {
         int N;
         int [] H;
 
-        Neighbors(InputReader in) {
+        Neighbors(InputReader in, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             N = in.nextInt();
             H = new int[COLORS];
 
@@ -50,9 +55,12 @@ public class ProblemB extends Round1B {
             }
         }
 
-        public String solve() {
-            // Check if it is possible. R>Y+B, Y>R+B B>R+Y
+        @Override
+        protected String solve() {
+            return String.format("Case #%d: %s\n", testNumber, solveInner());
+        }
 
+        private String solveInner() {
             boolean mixed = (H[1]+H[3]+H[5]>0);
 
             if (mixed) {
@@ -74,6 +82,7 @@ public class ProblemB extends Round1B {
                 }
             }
 
+            // Check if it is possible. R>Y+B, Y>R+B B>R+Y
             for (int i=0;i<COLORS;i+=2) {
                 if (H[i] > H[(i+2)%COLORS] + H[(i+4)%COLORS]) {
                     return IMPOSSIBLE;

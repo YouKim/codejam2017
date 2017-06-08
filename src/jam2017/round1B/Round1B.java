@@ -11,7 +11,7 @@ public abstract class Round1B extends Problem{
 
     public static void main(String[] args) {
         Problem [] problems = {
-                //new ProblemA(),
+                new ProblemA(),
                 new ProblemB(),
                 //new ProblemC(),
         };

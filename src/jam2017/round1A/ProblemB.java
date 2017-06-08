@@ -1,10 +1,10 @@
 package jam2017.round1A;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 public class ProblemB extends Round1A {
 
@@ -14,24 +14,31 @@ public class ProblemB extends Round1A {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        int ingredients = in.nextInt();
-        int packages = in.nextInt();
+    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
 
-        Recipe recipe = new Recipe(ingredients, packages, in);
-        String result = recipe.solve();
+        List<TestCase> tcs = new ArrayList<>();
 
-        out.printf("Case #%d: %s\n", testNumber, result);
+        for (int i=1;i<=testCount;i++) {
+            int ingredients = in.nextInt();
+            int packages = in.nextInt();
+
+            Recipe recipe = new Recipe(ingredients, packages, in, i, results[i]);
+            tcs.add(recipe);
+        }
+
+        return tcs;
     }
 
-    static class Recipe {
+    static class Recipe extends TestCase {
         int mIngr;
         int mPack;
 
         int mRecipe[];
         ArrayList<Pack> mPacks;
 
-        public Recipe(int ingredients, int packages, InputReader in) {
+        public Recipe(int ingredients, int packages, InputReader in, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             mIngr = ingredients;
             mPack = packages;
 
@@ -53,7 +60,8 @@ public class ProblemB extends Round1A {
             }
         }
 
-        public String solve() {
+        @Override
+        protected String solve() {
 
             Collections.sort(mPacks, new Comparator<Pack>() {
                 @Override
@@ -70,7 +78,7 @@ public class ProblemB extends Round1A {
                 }
             }
 
-            return String.valueOf(made);
+            return String.format("Case #%d: %s\n", testNumber, made);
         }
 
         public class Pack {

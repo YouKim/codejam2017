@@ -1,6 +1,7 @@
 package jam2017.round1A;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProblemA extends Round1A {
 
@@ -10,24 +11,30 @@ public class ProblemA extends Round1A {
     }
 
     @Override
-    protected void solveTest(int testNumber, InputReader in, PrintWriter out) {
-        int row = in.nextInt();
-        int col = in.nextInt();
+    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
 
-        char [][] letters = new char[row][];
+        List<TestCase> tcs = new ArrayList<>();
 
-        for (int i=0;i<row;i++) {
-            String line = in.next();
-            letters[i] = line.toCharArray();
+        for (int i=1;i<=testCount;i++) {
+            int row = in.nextInt();
+            int col = in.nextInt();
+
+            char [][] letters = new char[row][];
+
+            for (int j=0;j<row;j++) {
+                String line = in.next();
+                letters[j] = line.toCharArray();
+            }
+
+            Cake cake = new Cake(row, col, letters, i, results[i]);
+
+            tcs.add(cake);
         }
 
-        Cake cake = new Cake(row, col, letters);
-
-        String result = cake.solve();
-        out.printf("Case #%d:\n%s", testNumber, result);
+        return tcs;
     }
 
-    static class Cake {
+    static class Cake extends TestCase {
 
         static final char ASK ='?';
 
@@ -37,7 +44,9 @@ public class ProblemA extends Round1A {
         char [][] mCake;
         boolean[] hasLetter;
 
-        public Cake(int row, int col, char [][] cake) {
+        public Cake(int row, int col, char [][] cake, int testNumber, StringBuffer result) {
+            super(testNumber, result);
+
             R = row;
             C = col;
             mCake = cake;
@@ -57,7 +66,8 @@ public class ProblemA extends Round1A {
             }
         }
 
-        public String solve() {
+        @Override
+        protected String solve() {
 
             for (int r=0;r<R;r++) {
 
@@ -89,7 +99,7 @@ public class ProblemA extends Round1A {
                 }
             }
 
-            return getResult();
+            return String.format("Case #%d:\n%s", testNumber, getResult());
         }
 
         String getResult() {
