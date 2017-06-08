@@ -85,7 +85,7 @@ public class ProblemC extends Round1A {
                 }
             }
 
-            if (Tmin > 0 && Tmin < Integer.MAX_VALUE) {
+            if (Tmin > 0 && Tmin < Long.MAX_VALUE) {
                 return String.valueOf(Tmin);
             } else {
                 return IMPOSSIBLE;
@@ -137,7 +137,8 @@ public class ProblemC extends Round1A {
 
                                 //System.out.printf("Dnext %d Dmax %d D %d Delta %d C %d DEBUFF %d cureInterval %d", Dnext, Dmax, D, delta, c, DEBUFF, cureInterval);
                                 //System.out.printf(" AK %d -> AK %d\n", Ak, Ak - delta * DEBUFF);
-                                Ak = Ak - delta * DEBUFF;
+                                int Ak_d = Ak - delta * DEBUFF;
+                                Ak = Ak_d<0?0:Ak_d;
                                 Hd = HD - Ak;
                                 D += delta;
                                 T += (delta + c);
@@ -154,7 +155,8 @@ public class ProblemC extends Round1A {
                     if (D < Dmax) {
                         int d = calcPossibleDebuff(Hd, Ak, Dmax-D);
                         Hd = Hd - (d*Ak - ((d+1) * d * DEBUFF)/2);
-                        Ak -= (d * DEBUFF);
+                        int Ak_d = Ak - d * DEBUFF;
+                        Ak = Ak_d<0?0:Ak_d;
                         D += d;
                         T += d;
 
