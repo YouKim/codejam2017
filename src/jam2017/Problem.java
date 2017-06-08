@@ -29,7 +29,8 @@ public abstract class Problem {
     public static final String IMPOSSIBLE = "IMPOSSIBLE";
 
     protected static final boolean DEBUG = false;
-    static final int POOL_SIZE = 16;
+    static final int POOL_SIZE = 6;
+    static final int MILLI_WAIT = 10;
 
     protected String mAlpha;
     protected String mTitle;
@@ -108,6 +109,8 @@ public abstract class Problem {
             ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(POOL_SIZE);
             testCases = createTestCase(testCount, in, results);
 
+            long start = System.currentTimeMillis();
+
             for (TestCase tc:testCases) {
                 executor.execute(tc);
             }
@@ -115,9 +118,10 @@ public abstract class Problem {
             executor.shutdown();
 
             while (executor.getActiveCount() > 0) {
-                //System.out.print("active:" + active);
-                Thread.sleep(50);
+                Thread.sleep(MILLI_WAIT);
             }
+
+            System.out.println("Done:" + (System.currentTimeMillis() - start) + "ms");
 
             for (int i=1;i<=testCount;i++) {
                 out.printf(results[i].toString());

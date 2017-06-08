@@ -301,11 +301,6 @@ public class ProblemC extends Round1A {
             int getLargestD() {
                 return Dmax;
             }
-
-            void reset() {
-                saved.clear();
-                Dmax = -1;
-            }
         }
 
         static class State {
