@@ -29,171 +29,152 @@ public class ProblemC extends Round1A {
         static final int TURN_IMPOSSIBLE = -1;
 
         final int HD, AD, HK, AK, BUFF, DEBUFF;
-        ArrayList<Integer> debuffMap;
-        DCache dcache = new DCache();
+        ArrayList<Integer> debuffThreshold;
 
         Game(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
             HD = in.nextInt(); AD = in.nextInt(); HK = in.nextInt(); AK = in.nextInt();
             BUFF = in.nextInt(); DEBUFF = in.nextInt();
-            debuffMap = new ArrayList<>();
+            debuffThreshold = new ArrayList<>();
         }
 
         @Override
         protected String solve() {
 
-            int AB = calcAB(AD, HK, BUFF);
+            int AB = calcAB();
+            calcDebuffThreshold();
+
+            int T = simulate(HD, AK, AB);
+
+            String result = (T < Integer.MAX_VALUE)?String.valueOf(T):IMPOSSIBLE;
+
+            System.out.printf("Case #%d: %s\n", testNumber, result);
+            return String.format("Case #%d: %s\n", testNumber, result);
+        }
+
+        private int calcAB() {
+            if (BUFF <= 0) {
+                return ceil(HK, AD);
+            } else {
+                double result = (Math.sqrt(HK) * Math.sqrt(BUFF) - AD ) / BUFF;
+                int start = (result < 0)?0:((int) result);
+
+                int ABmin = Integer.MAX_VALUE;
+                for (int B=start;B<HK;B++) {
+                    int AB = ceil(HK, AD + B*BUFF) + B;
+                    if (AB < ABmin) {
+                        ABmin = AB;
+                    } else if (AB > ABmin) {
+                        break;
+                    }
+                }
+
+                return ABmin;
+            }
+        }
+
+        private void calcDebuffThreshold() {
             int Dmax = DEBUFF>0?ceil(AK, DEBUFF):0;
 
             for (int D=0;D<=Dmax;) {
-                debuffMap.add(D);
+                debuffThreshold.add(D);
                 int cureInterval = floor(HD-1, AK-D*DEBUFF);
                 int targetAttack = floor(HD-1, cureInterval+1);
                 int nextD = ceil(AK - targetAttack, DEBUFF);
 
-                //System.out.printf("debuffMap %d %d %d HD:%d AK:%d DEBUFF:%d\n", I, targetAttack, newD, HD, AK, DEBUFF);
                 if (AK-D*DEBUFF <= 0 || nextD <= D) {
                     break;
                 }
 
                 D = nextD;
             }
-
-            long Tmin = Long.MAX_VALUE;
-
-            long T = 1;
-            int d = 0, Hd = HD, Ak = AK;
-            for (int D=0;D>=0;) {
-
-                //System.out.printf("T %d d %d Hd %d Ak:%d D:%d\n", T, d, Hd, Ak, D);
-
-                long total = simulate(T, d, Hd, Ak, AB, D);
-                if (total>0) {
-                    if (total<Tmin) {
-                        Tmin = total;
-                    }
-                }
-                D = getNextD(D);
-
-                State saved = dcache.getLargest();
-                if (saved != null) {
-                    T = saved.T;
-                    Ak = saved.Ak;
-                    Hd = saved.Hd;
-                    d = dcache.getLargestD();
-                    //System.out.printf("3 Hd %d Ak %d D %d T %d\n", Hd, Ak, d, T);
-                } else {
-                    T = 1;
-                    Ak = AK;
-                    Hd = HD;
-                    d = 0;
-                }
-            }
-
-            String result;
-            if (Tmin > 0 && Tmin < Long.MAX_VALUE) {
-                result = String.valueOf(Tmin);
-            } else {
-                result = IMPOSSIBLE;
-            }
-
-            return String.format("Case #%d: %s\n", testNumber, result);
         }
 
-        private long simulate(long T, int D, int Hd, int Ak, int AB, int Dmax) {
+        int calcTurnAB(int Hd, int Ak, int AB) {
 
-            //int C=0;
+            // When Ak == 0 ab is Integer.MAX
+            int ab = floor(Hd-1, Ak); // turn left before cure;
 
-            while (AB>0) {
-                if (AB <= 1) {
-                    //System.out.printf("C %d D %d CD %d\n", C, Dmax, C+Dmax);
-                    return T;
-                }
+            if (AB-1 <= ab || Ak == 0) { // final cure can be -> attack.(+1)
+                return AB;
+            }
 
-                if (Hd - Ak + (D==Dmax?0:DEBUFF) <= 0) {
-                    Hd = HD - Ak;
+            // One Cure(+1) here! Dragon is cured and let heal(Hd -> HD) and attacked by knight(-Ak).
+            // Hd should be greater than 0. so -1 to ensure Hd > 0
 
-                    int cureInterval = floor(Hd-1, Ak);
+            int cureInterval = floor(HD-Ak-1, Ak);
 
-                    if (cureInterval < 1) {
-                        return TURN_IMPOSSIBLE;
-                    }
+            if (cureInterval < 1) {
+                return TURN_IMPOSSIBLE;
+            }
 
-                    //C++;
+            int c = floor2(AB-ab-1, cureInterval); // total cure is c + 1
 
+            return AB + c + 1;
+        }
 
-                    if (D == Dmax) {
-                        int c = floor2(AB-1, cureInterval);
-                        //System.out.printf("C %d AB %d HD %d Ak:%d \n", C, AB, HD, Ak);
-                        //C += c;
-                        //System.out.printf("C %d D %d CD %d\n", C, Dmax, C+Dmax);
-                        return T+AB+c;
+        int simulate(int Hd, int Ak, int AB) {
+            int D = 0;
+            int Dtarget = 0;
+            int total = 0;
+            int Tmin = Integer.MAX_VALUE;
+
+            boolean cured = false;
+
+            /*
+             * TODO:
+             * Using math to calculate D + C turns. At this time, loop method.
+             */
+
+            while (Hd > 0) {
+
+                int d = Dtarget - D;
+
+                if (d > 0) {
+                    int t = calcPossibleDebuff(Hd, Ak, d); // turn left before cure;
+
+                    if (t > 0) {
+                        t = Math.min(t, d);
+                        Hd = Hd - (t*Ak - ((t+1) * t * DEBUFF)/2);
+                        Ak = Ak - t * DEBUFF;
+                        Ak = Ak<0?0:Ak;
+                        D += t;
+                        total += t;
+                        cured = false;
                     } else {
-                        T++;
-                        int Dnext = getNextD(D) - 1;
-                        if (Dnext > D) {
-
-                            Dnext = Math.min(Dmax-1, Dnext);
-
-                            int delta = Dnext - D;
-
-                            delta = (delta - delta%cureInterval);
-
-                            if (delta > 0) {
-
-                                int c = floor(delta, cureInterval) ;
-
-                                //System.out.printf("Dnext %d Dmax %d D %d Delta %d C %d DEBUFF %d cureInterval %d", Dnext, Dmax, D, delta, c, DEBUFF, cureInterval);
-                                //System.out.printf(" AK %d -> AK %d\n", Ak, Ak - delta * DEBUFF);
-
-
-                                int Ak_d = Ak - delta * DEBUFF;
-                                Ak = Ak_d<0?0:Ak_d;
-                                Hd = HD - Ak;
-                                D += delta;
-                                T += (delta + c);
-                                //C += c;
-                                dcache.put(D, T, Ak, Hd);
-
-                                //System.out.printf("1 Hd %d Ak %d D %d T %d\n", Hd, Ak, D, T);
-                            }
+                        if (cured ) {
+                            return Tmin;
                         }
                     }
-                } else {
+                }
 
-                    if (D < Dmax) {
-                        int d = calcPossibleDebuff(Hd, Ak, Dmax-D);
-
-                        Hd = Hd - (d*Ak - ((d+1) * d * DEBUFF)/2);
-                        int Ak_d = Ak - d * DEBUFF;
-                        Ak = Ak_d<0?0:Ak_d;
-                        D += d;
-                        T += d;
-
-                        dcache.put(D, T, Ak, Hd);
-
-                    } else {
-                        int ab = floor(Hd-1, Ak);
-                        ab = Math.min(AB-1, ab);
-                        Hd = Hd - ab*Ak;
-
-                        AB -= ab;
-                        T += ab;
+                if (D == Dtarget) {
+                    int ab = calcTurnAB(Hd, Ak, AB);
+                    if (ab>0 && total + ab < Tmin) {
+                        Tmin = total + ab;
                     }
 
-                    if (Hd <= 0) {
-                        return TURN_IMPOSSIBLE;
+                    int nextD = getNextD(D);
+                    if (nextD < 0) {
+                        break;
                     }
+                    Dtarget = nextD;
+                }
+
+                if (Hd - Ak + DEBUFF <= 0) {
+                    total++;
+                    Hd = HD - Ak;
+                    cured = true;
                 }
             }
 
-            return TURN_IMPOSSIBLE;
+            return Tmin;
         }
 
         private int getNextD(int D) {
-            for (int i=0;i<debuffMap.size();i++) {
-                int d = debuffMap.get(i);
+            for (int i=0;i<debuffThreshold.size();i++) {
+                int d = debuffThreshold.get(i);
                 if (d > D) {
                     return d;
                 }
@@ -202,28 +183,8 @@ public class ProblemC extends Round1A {
             return -1;
         }
 
-        private int calcAB(int Ad, final int Hk, final int Buff) {
-            if (Buff <= 0) {
-                return ceil(Hk, Ad);
-            } else {
-                double result = (Math.sqrt(Hk) * Math.sqrt(Buff) - Ad ) / Buff;
-                int start = (result < 0)?0:((int) result);
-
-                int minAB = Integer.MAX_VALUE;
-                for (int B=start;B<Hk;B++) {
-                    int AB = ceil(Hk, Ad + B*Buff) + B;
-                    if (AB < minAB) {
-                        minAB = AB;
-                    } else if (AB > minAB) {
-                        break;
-                    }
-                }
-
-                return minAB;
-            }
-        }
-
         private int calcPossibleDebuff(int Hd, int Ak, int Dmax) {
+
             if (Ak-DEBUFF <= 0) {
                 return 1;
             }
@@ -267,52 +228,5 @@ public class ProblemC extends Round1A {
 
             return x/y - ((x%y==0)?1:0);
         }
-
-
-        static class DCache {
-            HashMap<Integer, State> saved = new HashMap<>();
-            int Dmax = -1;
-
-            void put(int D, long T, int Ak, int Hd) {
-                if (saved.containsKey(D)) {
-                    return;
-                }
-                //System.out.printf("4 Hd %d Ak %d D %d T %d\n", Hd, Ak, D, T);
-
-                if (T <1 || Ak < 0 || Hd < 0) {
-                    System.out.println("!!!!!!!!");
-                    return;
-                }
-
-                saved.put(D, new State(T, Ak, Hd));
-                if (D > Dmax) {
-                    Dmax = D;
-                }
-            }
-
-            State get(int D) {
-                return saved.get(D);
-            }
-
-            State getLargest() {
-                return saved.get(Dmax);
-            }
-
-            int getLargestD() {
-                return Dmax;
-            }
-        }
-
-        static class State {
-            long T;
-            int Ak, Hd;
-
-            State(long T, int Ak, int Hd) {
-                this.T = T;
-                this.Ak = Ak;
-                this.Hd = Hd;
-            }
-        }
-
     }
 }
