@@ -92,15 +92,15 @@ public class ProblemC extends Round1A {
 
         int calcTurnAB(int Hd, int Ak, int AB) {
 
-            // When Ak == 0 ab is Integer.MAX
-            int ab = floor(Hd-1, Ak); // turn left before cure;
+            // When Ak == 0, ab is Integer.MAX. Do not use condition like (AB <= ab+1)
+            int ab = floor(Hd-1, Ak); // Turns left before cure;
 
-            if (AB-1 <= ab || Ak == 0) { // final cure can be -> attack.(+1)
+            if (AB-1 <= ab || Ak == 0) { // Cure is not needed in final attack(-1).
                 return AB;
             }
 
-            // One Cure(+1) here! Dragon is cured and let heal(Hd -> HD) and attacked by knight(-Ak).
-            // Hd should be greater than 0. so -1 to ensure Hd > 0
+            // One cure here(+1)! Dragon is cured(Hd -> HD) and knight's turn(-Ak).
+            // Calculate interval on HD-Ak-1. (-1) to ensure Hd > 0.
 
             int cureInterval = floor(HD-Ak-1, Ak);
 
@@ -108,9 +108,9 @@ public class ProblemC extends Round1A {
                 return TURN_IMPOSSIBLE;
             }
 
-            int c = floor2(AB-ab-1, cureInterval); // total cure is c + 1
+            int c = floor2(AB-ab-1, cureInterval); // Cure is not needed in final attack(-1).
 
-            return AB + c + 1;
+            return AB + c + 1; // Don't forget one cure over there.
         }
 
         int simulate(int Hd, int Ak, int AB) {
@@ -121,14 +121,9 @@ public class ProblemC extends Round1A {
 
             boolean cured = false;
 
-            /*
-             * TODO:
-             * Using math to calculate D + C turns. At this time, loop method.
-             */
-
             while (Hd > 0) {
 
-                if (cured) {
+                if (cured) { // Hd == HD - Ak is wrong when 1st turn is Debuff turn.
                     int cureInterval = floor(Hd-1, Ak);
 
                     if (cureInterval < 1) {
