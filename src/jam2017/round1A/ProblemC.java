@@ -1,7 +1,6 @@
 package jam2017.round1A;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProblemC extends Round1A {
@@ -129,6 +128,28 @@ public class ProblemC extends Round1A {
 
             while (Hd > 0) {
 
+                if (cured) {
+                    int cureInterval = floor(Hd-1, Ak);
+
+                    if (cureInterval < 1) {
+                        return Tmin;
+                    }
+
+                    int t = Dtarget - D - 1;
+                    t = (t - t%cureInterval);
+
+                    if (t > 0) {
+                        int c = floor(t, cureInterval) ;
+
+                        Ak = Ak - t * DEBUFF;
+                        Ak = Ak<0?0:Ak;
+                        Hd = HD - Ak;
+
+                        D += t;
+                        total += (t+c);
+                    }
+                }
+
                 int d = Dtarget - D;
 
                 if (d > 0) {
@@ -142,12 +163,9 @@ public class ProblemC extends Round1A {
                         D += t;
                         total += t;
                         cured = false;
-                    } else {
-                        if (cured ) {
-                            return Tmin;
-                        }
                     }
                 }
+
 
                 if (D == Dtarget) {
                     int ab = calcTurnAB(Hd, Ak, AB);
