@@ -28,21 +28,18 @@ public class ProblemC extends Round1A {
         static final int TURN_IMPOSSIBLE = -1;
 
         final int HD, AD, HK, AK, BUFF, DEBUFF;
-        ArrayList<Integer> debuffThreshold;
 
         Game(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
             HD = in.nextInt(); AD = in.nextInt(); HK = in.nextInt(); AK = in.nextInt();
             BUFF = in.nextInt(); DEBUFF = in.nextInt();
-            debuffThreshold = new ArrayList<>();
         }
 
         @Override
         protected String solve() {
 
             int AB = calcAB();
-            calcDebuffThreshold();
 
             int T = simulate(HD, AK, AB);
 
@@ -70,23 +67,6 @@ public class ProblemC extends Round1A {
                 }
 
                 return ABmin;
-            }
-        }
-
-        private void calcDebuffThreshold() {
-            int Dmax = DEBUFF>0?ceil(AK, DEBUFF):0;
-
-            for (int D=0;D<=Dmax;) {
-                debuffThreshold.add(D);
-                int cureInterval = floor(HD-1, AK-D*DEBUFF);
-                int targetAttack = floor(HD-1, cureInterval+1);
-                int nextD = ceil(AK - targetAttack, DEBUFF);
-
-                if (AK-D*DEBUFF <= 0 || nextD <= D) {
-                    break;
-                }
-
-                D = nextD;
             }
         }
 
@@ -123,7 +103,7 @@ public class ProblemC extends Round1A {
 
             while (Hd > 0) {
 
-                if (cured) { // Hd == HD - Ak is wrong when 1st turn is Debuff turn.
+                if (cured) { // (Hd == HD - Ak) is wrong when 1st turn is Debuff turn.
                     int cureInterval = floor(Hd-1, Ak);
 
                     if (cureInterval < 1) {
@@ -136,8 +116,7 @@ public class ProblemC extends Round1A {
                     if (t > 0) {
                         int c = floor(t, cureInterval) ;
 
-                        Ak = Ak - t * DEBUFF;
-                        Ak = Ak<0?0:Ak;
+                        Ak = debuff(Ak, t);
                         Hd = HD - Ak;
 
                         D += t;
@@ -153,8 +132,7 @@ public class ProblemC extends Round1A {
                     if (t > 0) {
                         t = Math.min(t, d);
                         Hd = Hd - (t*Ak - ((t+1) * t * DEBUFF)/2);
-                        Ak = Ak - t * DEBUFF;
-                        Ak = Ak<0?0:Ak;
+                        Ak = debuff(Ak, t);
                         D += t;
                         total += t;
                         cured = false;
@@ -164,15 +142,23 @@ public class ProblemC extends Round1A {
 
                 if (D == Dtarget) {
                     int ab = calcTurnAB(Hd, Ak, AB);
-                    if (ab>0 && total + ab < Tmin) {
+                    if (ab > 0 && total + ab < Tmin) {
                         Tmin = total + ab;
                     }
 
-                    int nextD = getNextD(D);
-                    if (nextD < 0) {
+                    if (DEBUFF > 0 && AK-D*DEBUFF > 0) {
+
+                        int cureInterval = floor(HD-1, AK-D*DEBUFF);
+                        int targetAttack = floor(HD-1, cureInterval+1);
+                        Dtarget = ceil(AK - targetAttack, DEBUFF);
+
+                        if (Dtarget <= D) {
+                            break;
+                        }
+
+                    } else {
                         break;
                     }
-                    Dtarget = nextD;
                 }
 
                 if (Hd - Ak + DEBUFF <= 0) {
@@ -185,15 +171,9 @@ public class ProblemC extends Round1A {
             return Tmin;
         }
 
-        private int getNextD(int D) {
-            for (int i=0;i<debuffThreshold.size();i++) {
-                int d = debuffThreshold.get(i);
-                if (d > D) {
-                    return d;
-                }
-            }
-
-            return -1;
+        private int debuff(int Ak, int n) {
+            Ak = Ak - n * DEBUFF;
+            return Ak<0?0:Ak;
         }
 
         private int calcPossibleDebuff(int Hd, int Ak, int Dmax) {
