@@ -38,11 +38,8 @@ public class ProblemC extends Round1A {
 
         @Override
         protected String solve() {
-
             int AB = calcAB();
-
             int T = simulate(HD, AK, AB);
-
             String result = (T < Integer.MAX_VALUE)?String.valueOf(T):IMPOSSIBLE;
 
             System.out.printf("Case #%d: %s\n", testNumber, result);
@@ -94,20 +91,16 @@ public class ProblemC extends Round1A {
         }
 
         int simulate(int Hd, int Ak, int AB) {
-            int D = 0;
-            int Dtarget = 0;
+            int D = 0, Dtarget = 0;
             int total = 0;
             int Tmin = Integer.MAX_VALUE;
 
-            boolean cured = false;
-
             while (Hd > 0) {
-
-                if (cured) { // (Hd == HD - Ak) is wrong when 1st turn is Debuff turn.
+                if (Hd == HD - Ak && total > 1) {
                     int cureInterval = floor(Hd-1, Ak);
 
                     if (cureInterval < 1) {
-                        return Tmin;
+                        break;
                     }
 
                     int t = Dtarget - D - 1;
@@ -124,21 +117,27 @@ public class ProblemC extends Round1A {
                     }
                 }
 
-                int d = Dtarget - D;
+                final int d = Dtarget - D;
 
                 if (d > 0) {
-                    int t = calcPossibleDebuff(Hd, Ak, d); // turn left before cure;
+                    int t = floor(Hd-1, Ak-DEBUFF);
 
                     if (t > 0) {
-                        t = Math.min(t, d);
+                        t = (t>d)?d:t;
+
                         Hd = Hd - (t*Ak - ((t+1) * t * DEBUFF)/2);
                         Ak = debuff(Ak, t);
+
+                        if (t < d && Hd - Ak + DEBUFF > 0) {
+                            Hd = Hd - Ak + DEBUFF;
+                            Ak = debuff(Ak, 1);
+                            t++;
+                        }
+
                         D += t;
                         total += t;
-                        cured = false;
                     }
                 }
-
 
                 if (D == Dtarget) {
                     int ab = calcTurnAB(Hd, Ak, AB);
@@ -146,25 +145,18 @@ public class ProblemC extends Round1A {
                         Tmin = total + ab;
                     }
 
-                    if (DEBUFF > 0 && AK-D*DEBUFF > 0) {
-
-                        int cureInterval = floor(HD-1, AK-D*DEBUFF);
-                        int targetAttack = floor(HD-1, cureInterval+1);
-                        Dtarget = ceil(AK - targetAttack, DEBUFF);
-
-                        if (Dtarget <= D) {
-                            break;
-                        }
-
-                    } else {
+                    if (DEBUFF <= 0 || Ak <= 0) {
                         break;
                     }
+
+                    int cureInterval = floor(HD-1, Ak);
+                    int targetAttack = floor(HD-1, cureInterval+1);
+                    Dtarget = ceil(AK - targetAttack, DEBUFF);
                 }
 
                 if (Hd - Ak + DEBUFF <= 0) {
                     total++;
                     Hd = HD - Ak;
-                    cured = true;
                 }
             }
 
@@ -172,37 +164,11 @@ public class ProblemC extends Round1A {
         }
 
         private int debuff(int Ak, int n) {
-            Ak = Ak - n * DEBUFF;
+            Ak -= (n * DEBUFF);
             return Ak<0?0:Ak;
         }
 
-        private int calcPossibleDebuff(int Hd, int Ak, int Dmax) {
-
-            if (Ak-DEBUFF <= 0) {
-                return 1;
-            }
-
-            int start = floor(Hd-1, Ak-DEBUFF);
-            int end = Dmax;
-
-            int result = start>Dmax?Dmax:start;
-
-            for (int i=start+1;i<=end;i++) {
-                if (Hd - (i*Ak - ((i+1) * i * DEBUFF)/2) > 0) {
-                    result = i;
-                } else {
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        private int ceil(int x, int y) {
-            if (y<=0) {
-                return Integer.MAX_VALUE;
-            }
-
+        private int ceil(int x, int y) { // y > 0 guaranteed
             return x/y + (x%y>0?1:0);
         }
 
@@ -214,11 +180,7 @@ public class ProblemC extends Round1A {
             return x/y;
         }
 
-        private int floor2(int x, int y) {
-            if (y<=0) {
-                return Integer.MAX_VALUE;
-            }
-
+        private int floor2(int x, int y) { // y > 0 guaranteed
             return x/y - ((x%y==0)?1:0);
         }
     }
