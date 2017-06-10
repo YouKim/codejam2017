@@ -68,11 +68,13 @@ public class ProblemC extends Round1A {
         }
 
         int calcTurnAB(int Hd, int Ak, int AB) {
+            if (Ak <= 0) {
+                return AB;
+            }
 
-            // When Ak == 0, ab is Integer.MAX. Do not use condition like (AB <= ab+1)
-            int ab = floor(Hd-1, Ak); // Turns left before cure;
+            int t = floor(Hd-1, Ak); // Turns left before cure;
 
-            if (AB-1 <= ab || Ak == 0) { // Cure is not needed in final attack(-1).
+            if (AB <= t + 1) { // Cure is not needed in final attack(+1).
                 return AB;
             }
 
@@ -85,7 +87,7 @@ public class ProblemC extends Round1A {
                 return TURN_IMPOSSIBLE;
             }
 
-            int c = floor2(AB-ab-1, cureInterval); // Cure is not needed in final attack(-1).
+            int c = floor2(AB-t-1, cureInterval); // Cure is not needed in final attack(-1).
 
             return AB + c + 1; // Don't forget one cure over there.
         }
@@ -119,12 +121,16 @@ public class ProblemC extends Round1A {
 
                 final int d = Dtarget - D;
 
-                if (d > 0) {
-                    int t = floor(Hd-1, Ak-DEBUFF);
+                if (d > 0 && Ak > 0) {
+                    int t;
+                    if (Ak-DEBUFF > 0) {
+                        t = floor(Hd-1, Ak-DEBUFF);
+                        t = (t>d)?d:t;
+                    } else {
+                        t = d;
+                    }
 
                     if (t > 0) {
-                        t = (t>d)?d:t;
-
                         Hd = Hd - (t*Ak - ((t+1) * t * DEBUFF)/2);
                         Ak = debuff(Ak, t);
 
@@ -173,10 +179,6 @@ public class ProblemC extends Round1A {
         }
 
         private int floor(int x, int y) {
-            if (y<=0) {
-                return Integer.MAX_VALUE;
-            }
-
             return x/y;
         }
 
