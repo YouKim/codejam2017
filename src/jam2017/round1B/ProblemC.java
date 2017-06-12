@@ -36,6 +36,8 @@ public class ProblemC extends Round1B {
 
         private final int [] U, V;
 
+        private final int [][] dist;
+
         HashMap<Integer, City> cities;
 
         protected PonyExpress(InputReader in, int testNumber, StringBuffer result) {
@@ -46,6 +48,8 @@ public class ProblemC extends Round1B {
 
             cities = new HashMap<>();
 
+            dist = new int[N+1][N+1];
+
             for (int i=1;i<=N;i++) {
                 int E = in.nextInt();
                 int S = in.nextInt();
@@ -55,17 +59,35 @@ public class ProblemC extends Round1B {
 
             for (int i=1;i<=N;i++) {
                 for (int j=1;j<=N;j++) {
-                    int dist = in.nextInt();
+                    int distance = in.nextInt();
+                    dist[i][j] = distance;
+                }
+            }
 
-                    if (dist > 0) {
-                        cities.get(i).addEdge(j, dist);
+            printDist();
+
+            for (int k=1;k<=N;k++) {
+                for (int i=1;i<=N;i++) {
+                    for (int j=1;j<=N;j++) {
+                        if (i == j || i == k || j == k) {
+                            continue;
+                        }
+                        if (dist[i][k] > 0 && dist[k][j] > 0) {
+                            if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                                dist[i][j] = dist[i][k] + dist[k][j];
+                            }
+                        }
                     }
                 }
             }
 
+            printDist();
+
+            /*
             for (City city : cities.values()) {
                 city.addHorse(city.endurance, city.speed);
             }
+            */
 
             U = new int[Q];
             V = new int[Q];
@@ -75,7 +97,7 @@ public class ProblemC extends Round1B {
                 V[i] = in.nextInt();
             }
 
-            print();
+            //print();
         }
 
         private void print() {
@@ -84,6 +106,24 @@ public class ProblemC extends Round1B {
             System.out.printf("=============================\n");
             for (City city : cities.values()) {
                 city.print();
+            }
+            System.out.printf("=============================\n");
+        }
+
+
+        private void printDist() {
+            // TODO Auto-generated method stub
+
+            System.out.printf("=============================\n");
+            for (int i=1;i<=N;i++) {
+                for (int j=1;j<=N;j++) {
+                    if (dist[i][j] == Integer.MAX_VALUE) {
+                        System.out.print(" -1");
+                    } else {
+                        System.out.print(" " + dist[i][j]);
+                    }
+                }
+                System.out.printf("\n");
             }
             System.out.printf("=============================\n");
         }
