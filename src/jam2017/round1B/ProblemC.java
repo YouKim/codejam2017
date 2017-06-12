@@ -53,8 +53,7 @@ public class ProblemC extends Round1B {
 
             for (int i=1;i<=N;i++) {
                 for (int j=1;j<=N;j++) {
-                    int distance = in.nextInt();
-                    dist[i][j] = distance;
+                    dist[i][j] = in.nextInt();
                 }
             }
 
@@ -67,51 +66,41 @@ public class ProblemC extends Round1B {
         @Override
         protected String solve() {
 
-            //printDist();
             for (int k=1;k<=N;k++) {
                 for (int i=1;i<=N;i++) {
                     for (int j=1;j<=N;j++) {
-                        if (i == j || i == k || j == k) {
-                            continue;
-                        }
-                        if (dist[i][k] > 0 && dist[k][j] > 0) {
-                            if (dist[i][j] < 0 || dist[i][j] > dist[i][k] + dist[k][j]) {
-                                dist[i][j] = dist[i][k] + dist[k][j];
+                        if (i != j && i != k && j != k) {
+                            if (dist[i][k] > 0 && dist[k][j] > 0) {
+                                if (dist[i][j] < 0 || dist[i][j] > dist[i][k] + dist[k][j]) {
+                                    dist[i][j] = dist[i][k] + dist[k][j];
+                                }
                             }
                         }
                     }
                 }
             }
-            //printDist();
 
             for (int i=1;i<=N;i++) {
                 for (int j=1;j<=N;j++) {
-                    if (i == j) {
-                        time[i][j] = Double.MAX_VALUE;
+                    if (dist[i][j] > 0 && dist[i][j] <= E[i]) {
+                        time[i][j] = (double) dist[i][j] /  (double) S[i];
                     } else {
-                        if (dist[i][j] > 0 && dist[i][j] <= E[i]) {
-                            time[i][j] = (double) dist[i][j] /  (double) S[i];
-                        } else {
-                            time[i][j] = Double.MAX_VALUE;
-                        }
+                        time[i][j] = Double.MAX_VALUE;
                     }
                 }
             }
-            //printTime();
 
             for (int k=1;k<=N;k++) {
                 for (int i=1;i<=N;i++) {
                     for (int j=1;j<=N;j++) {
-                        if (i == j || i == k || j == k) {
-                            continue;
-                        }
-                        if (time[i][j] > time[i][k] + time[k][j]) {
-                            time[i][j] = time[i][k] + time[k][j];
+                        if (i != j && i != k && j != k) {
+                            if (time[i][j] > time[i][k] + time[k][j]) {
+                                time[i][j] = time[i][k] + time[k][j];
+                            }
                         }
                     }
                 }
             }
-            //printTime();
 
             StringBuffer result = new StringBuffer();
 
@@ -120,28 +109,6 @@ public class ProblemC extends Round1B {
              }
 
             return String.format("Case #%d: %s\n", testNumber, result.toString().trim());
-        }
-
-        private void printDist() {
-            System.out.printf("=============================\n");
-            for (int i=1;i<=N;i++) {
-                for (int j=1;j<=N;j++) {
-                    System.out.print(" " + dist[i][j]);
-                }
-                System.out.printf("\n");
-            }
-            System.out.printf("=============================\n");
-        }
-
-        private void printTime() {
-            System.out.printf("=============================\n");
-            for (int i=1;i<=N;i++) {
-                for (int j=1;j<=N;j++) {
-                    System.out.print(" " + time[i][j]);
-                }
-                System.out.printf("\n");
-            }
-            System.out.printf("=============================\n");
         }
     }
 }
