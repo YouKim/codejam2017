@@ -50,12 +50,17 @@ public class ProblemC extends Round1A {
             if (BUFF <= 0) {
                 return ceil(HK, AD);
             } else {
-                double result = (Math.sqrt(HK) * Math.sqrt(BUFF) - AD ) / BUFF;
-                int start = (result < 0)?0:((int) result);
+                int B = 0;
+                int Ad = AD;
+                if ((HK - AD) / BUFF > 100) {
+                    double result = (Math.sqrt(HK) * Math.sqrt(BUFF) - AD) / BUFF;
+                    B = (result < 0) ? 0 : ((int) result);
+                    Ad = AD + B * BUFF;
+                }
 
                 int ABmin = Integer.MAX_VALUE;
-                for (int B=start;B<HK;B++) {
-                    int AB = ceil(HK, AD + B*BUFF) + B;
+                for (;B<HK;B++, Ad += BUFF) {
+                    int AB = ceil(HK, Ad) + B;
                     if (AB < ABmin) {
                         ABmin = AB;
                     } else if (AB > ABmin) {
