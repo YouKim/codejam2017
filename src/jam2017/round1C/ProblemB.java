@@ -1,7 +1,11 @@
 package jam2017.round1C;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import jam2017.round1C.ProblemA.Pancakes.Cake;
 
 public class ProblemB extends Round1C {
 
@@ -23,6 +27,8 @@ public class ProblemB extends Round1C {
     }
 
     static class Partnering extends TestCase {
+
+        static final int DAY = 24 * 60; //1440
 
         int Ac, Aj;
         int [] C, D, J, K;
@@ -51,5 +57,74 @@ public class ProblemB extends Round1C {
             return null;
         }
 
+        class TimeTable {
+            ArrayList<Activity> table = new ArrayList<>();
+            int Tc, Tj;
+            void addActivity(int start, int end, boolean isCameron) {
+                table.add(new Activity(start, end, isCameron));
+                int duration = end - start;
+
+                if (isCameron) {
+                    Tc += duration;
+                } else {
+                    Tj += duration;
+                }
+            }
+
+            void sort() {
+                Collections.sort(table, new Comparator<Activity>() {
+                    @Override
+                    public int compare(Activity o1, Activity o2) {
+                        return o2.start - o1.start;
+                    }
+                });
+            }
+
+            ArrayList<Freetime> getFreeTime() {
+                ArrayList<Freetime> result = new ArrayList<>();
+
+                int size = table.size();
+                for (int i=0;i<size;i++) {
+                    Activity act1 = table.get(i);
+                    Activity act2 = (i+1<size)?table.get(i+1):table.get(0);
+
+                    int duration = (act2.start - act1.end + DAY)%DAY;
+                    if (duration > 0) {
+                        Freetime free = new Freetime(act1.end, act2.start, duration, act1.isCameron, act2.isCameron);
+                        result.add(free);
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        class Activity {
+            int start;
+            int end;
+            boolean isCameron;
+
+            Activity(int start, int end, boolean isCameron) {
+                this.start = start;
+                this.end = end;
+                this.isCameron = isCameron;
+            }
+        }
+
+        class Freetime {
+            int start;
+            int end;
+            int duration;
+            boolean startIsCameron;
+            boolean endIsCameron;
+
+            Freetime(int start, int end, int duration, boolean startIsCameron, boolean endIsCameron) {
+                this.start = start;
+                this.end = end;
+                this.duration = duration;
+                this.startIsCameron = startIsCameron;
+                this.endIsCameron = endIsCameron;
+            }
+        }
     }
 }
