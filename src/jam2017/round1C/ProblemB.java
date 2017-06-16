@@ -29,31 +29,39 @@ public class ProblemB extends Round1C {
     static class Partnering extends TestCase {
 
         static final int DAY = 24 * 60; //1440
-
         int Ac, Aj;
-        int [] C, D, J, K;
+        TimeTable table;
 
         protected Partnering(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
             Ac = in.nextInt(); Aj = in.nextInt();
 
-            C = new int[Ac]; D = new int[Ac];
-            J = new int[Aj]; K = new int[Aj];
+            table = new TimeTable();
 
             for (int i=0;i<Ac;i++) {
-                C[i] = in.nextInt();
-                D[i] = in.nextInt();
+                int start = in.nextInt();
+                int end = in.nextInt();
+                table.addActivity(start, end, true);
             }
 
             for (int i=0;i<Aj;i++) {
-                J[i] = in.nextInt();
-                K[i] = in.nextInt();
+                int start = in.nextInt();
+                int end = in.nextInt();
+                table.addActivity(start, end, false);
             }
         }
 
         @Override
         protected String solve() {
+            table.sort();
+            ArrayList<Freetime> freetimes = table.getFreeTime();
+
+            System.out.println("====================");
+            for (Freetime freetime:freetimes) {
+                freetime.print();
+            }
+
             return null;
         }
 
@@ -124,6 +132,11 @@ public class ProblemB extends Round1C {
                 this.duration = duration;
                 this.startIsCameron = startIsCameron;
                 this.endIsCameron = endIsCameron;
+            }
+
+            public void print() {
+                // TODO Auto-generated method stub
+                System.out.printf("%4d %4d %4d %5s %5s\n", start, end, duration, startIsCameron, endIsCameron);
             }
         }
     }
