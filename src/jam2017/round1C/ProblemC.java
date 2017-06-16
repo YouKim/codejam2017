@@ -1,7 +1,5 @@
 package jam2017.round1C;
 
-import java.util.List;
-
 public class ProblemC extends Round1C {
 
     public ProblemC() {
@@ -10,7 +8,7 @@ public class ProblemC extends Round1C {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
         return null;
     }
 }

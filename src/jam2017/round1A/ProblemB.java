@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 
 public class ProblemB extends Round1A {
 
@@ -14,19 +13,8 @@ public class ProblemB extends Round1A {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            int ingredients = in.nextInt();
-            int packages = in.nextInt();
-
-            Recipe recipe = new Recipe(ingredients, packages, in, i, results[i]);
-            tcs.add(recipe);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Recipe(in, testNumber, result);
     }
 
     static class Recipe extends TestCase {
@@ -36,21 +24,21 @@ public class ProblemB extends Round1A {
         int mRecipe[];
         ArrayList<Pack> mPacks;
 
-        public Recipe(int ingredients, int packages, InputReader in, int testNumber, StringBuffer result) {
+        public Recipe(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
-            mIngr = ingredients;
-            mPack = packages;
+            mIngr = in.nextInt();
+            mPack = in.nextInt();
 
-            mRecipe = new int[ingredients];
+            mRecipe = new int[mIngr];
             mPacks = new ArrayList<>();
 
-            for (int i=0;i<ingredients;i++) {
+            for (int i=0;i<mIngr;i++) {
                 mRecipe[i] = in.nextInt();
             }
 
-            for (int i=0;i<ingredients;i++) {
-                for (int j=0;j<packages;j++) {
+            for (int i=0;i<mIngr;i++) {
+                for (int j=0;j<mPack;j++) {
                     int gram = in.nextInt();
                     Pack pack = new Pack(i, gram, mRecipe[i]);
                     if (!pack.isInvalid) {

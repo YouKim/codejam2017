@@ -1,7 +1,5 @@
 package jam2017.qualificationRound;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -13,19 +11,8 @@ public class ProblemC extends Qulification {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            long stalls = in.nextLong();
-            long people = in.nextLong();
-
-            Stall stall = new Stall(stalls, people, i, results[i]);
-            tcs.add(stall);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Stall(in, testNumber, result);
     }
 
     static class Stall extends TestCase {
@@ -33,11 +20,11 @@ public class ProblemC extends Qulification {
         private long mPeople;
         private TreeMap<Long, Long> tiedStalls;
 
-        Stall(long stalls, long people, int testNumber, StringBuffer result) {
+        Stall(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
-            mPeople = people;
             tiedStalls = new TreeMap<>();
-            add(stalls, 1);
+            add(in.nextLong(), 1);
+            mPeople = in.nextLong();
         }
 
         void add(long size, long number) {

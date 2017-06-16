@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 
 public class ProblemD extends Qulification {
@@ -17,28 +16,8 @@ public class ProblemD extends Qulification {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            int n = in.nextInt();
-            int pre = in.nextInt();
-            FashionMap map = new FashionMap(n, i, results[i]);
-
-            for (int j = 0; j < pre; j++) {
-                char model = in.nextChar();
-
-                int row = in.nextInt();
-                int col = in.nextInt();
-
-                map.put(row, col, model);
-            }
-
-            tcs.add(map);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new FashionMap(in, testNumber, result);
     }
 
     static class FashionMap extends TestCase {
@@ -57,21 +36,31 @@ public class ProblemD extends Qulification {
 
         private int mScore;
 
-        public FashionMap(int size, int testNumber, StringBuffer result) {
+        public FashionMap(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
-            mSize = size;
+            mSize = in.nextInt();
             mModels = new HashMap<>();
             mUpdates = new HashMap<>();
             // index (r/c - 1)
-            rowBlocked = new boolean[size+1];
-            colBlocked = new boolean[size+1];
+            rowBlocked = new boolean[mSize+1];
+            colBlocked = new boolean[mSize+1];
 
             // index (r+c)
-            diagSumBlocked = new boolean[2*(size+1)];
+            diagSumBlocked = new boolean[2*(mSize+1)];
 
             // index (size+r-c)
-            diagDifBlocked = new boolean[2*(size+1)];
+            diagDifBlocked = new boolean[2*(mSize+1)];
+
+            int pre = in.nextInt();
+
+            for (int i = 0; i < pre; i++) {
+                char model = in.nextChar();
+                int row = in.nextInt();
+                int col = in.nextInt();
+
+                put(row, col, model);
+            }
         }
 
         public char get(int row, int col) {

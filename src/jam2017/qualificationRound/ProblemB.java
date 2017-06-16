@@ -1,8 +1,5 @@
 package jam2017.qualificationRound;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemB extends Qulification {
 
     public ProblemB() {
@@ -11,26 +8,17 @@ public class ProblemB extends Qulification {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer[] results) {
-        // TODO Auto-generated method stub
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            String letters = in.next();
-            Number number = new Number(letters, i, results[i]);
-            tcs.add(number);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Number(in, testNumber, result);
     }
 
     static class Number extends TestCase {
 
         private char[] numbers;
 
-        Number(String m, int testNumber, StringBuffer result) {
+        Number(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
-            numbers = m.toCharArray();
+            numbers = in.next().toCharArray();
         }
 
         @Override

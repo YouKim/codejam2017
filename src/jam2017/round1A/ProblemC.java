@@ -1,8 +1,5 @@
 package jam2017.round1A;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemC extends Round1A {
 
     public ProblemC() {
@@ -11,16 +8,8 @@ public class ProblemC extends Round1A {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            Game game = new Game(in, i, results[i]);
-            tcs.add(game);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Game(in, testNumber, result);
     }
 
     static class Game extends TestCase {

@@ -1,8 +1,5 @@
 package jam2017.round1A;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemA extends Round1A {
 
     public ProblemA() {
@@ -11,27 +8,8 @@ public class ProblemA extends Round1A {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            int row = in.nextInt();
-            int col = in.nextInt();
-
-            char [][] letters = new char[row][];
-
-            for (int j=0;j<row;j++) {
-                String line = in.next();
-                letters[j] = line.toCharArray();
-            }
-
-            Cake cake = new Cake(row, col, letters, i, results[i]);
-
-            tcs.add(cake);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Cake(in, testNumber, result);
     }
 
     static class Cake extends TestCase {
@@ -44,14 +22,22 @@ public class ProblemA extends Round1A {
         char [][] mCake;
         boolean[] hasLetter;
 
-        public Cake(int row, int col, char [][] cake, int testNumber, StringBuffer result) {
+        public Cake(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
-            R = row;
-            C = col;
-            mCake = cake;
+            R = in.nextInt();
+            C = in.nextInt();
 
-            hasLetter = new boolean[row];
+            char [][] letters = new char[R][];
+
+            for (int j=0;j<R;j++) {
+                String line = in.next();
+                letters[j] = line.toCharArray();
+            }
+
+            mCake = letters;
+
+            hasLetter = new boolean[R];
             checkLetter();
         }
 

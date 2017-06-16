@@ -1,8 +1,5 @@
 package jam2017.round1B;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemC extends Round1B {
 
     public ProblemC() {
@@ -11,15 +8,8 @@ public class ProblemC extends Round1B {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            PonyExpress test = new PonyExpress(in, i, results[i]);
-            tcs.add(test);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new PonyExpress(in, testNumber, result);
     }
 
     static class PonyExpress extends TestCase {

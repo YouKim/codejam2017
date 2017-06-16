@@ -1,8 +1,5 @@
 package jam2017.qualificationRound;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemA extends Qulification {
 
     public ProblemA() {
@@ -11,19 +8,8 @@ public class ProblemA extends Qulification {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            String cakes = in.next();
-            int n = in.nextInt();
-
-            Pancake cake = new Pancake(cakes, n, i, results[i]);
-            tcs.add(cake);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Pancake(in, testNumber, result);
     }
 
     static class Pancake extends TestCase {
@@ -31,10 +17,10 @@ public class ProblemA extends Qulification {
         private char[] cakes;
         private int mSize;
 
-        Pancake(String m, int flipSize, int testNumber, StringBuffer result) {
+        Pancake(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
-            cakes = m.toCharArray();
-            mSize = flipSize;
+            cakes = in.next().toCharArray();
+            mSize = in.nextInt();
         }
 
         boolean flip(int index) {

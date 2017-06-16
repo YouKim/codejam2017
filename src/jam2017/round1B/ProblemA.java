@@ -1,8 +1,5 @@
 package jam2017.round1B;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProblemA extends Round1B {
 
     public ProblemA() {
@@ -11,16 +8,8 @@ public class ProblemA extends Round1B {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            CruiseControl cc = new CruiseControl(in, i, results[i]);
-            tcs.add(cc);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new CruiseControl(in, testNumber, result);
     }
 
     static class CruiseControl extends TestCase {

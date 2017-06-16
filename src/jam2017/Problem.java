@@ -10,12 +10,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
 
 public abstract class Problem {
 
@@ -36,7 +34,7 @@ public abstract class Problem {
     protected String mTitle;
     protected String mSubFolderName;
 
-    protected abstract List<TestCase> createTestCase(int testCount, InputReader in, StringBuffer[] results);
+    protected abstract TestCase createTestCase(int testCount, InputReader in, StringBuffer result);
     protected abstract String getSubfolderName();
 
     public final void solve() {
@@ -99,7 +97,7 @@ public abstract class Problem {
         try {
             int testCount = Integer.parseInt(in.next());
 
-            List<TestCase> testCases = null;
+
             StringBuffer results [] = new StringBuffer[testCount+1];
 
             for (int i=1;i<=testCount;i++) {
@@ -107,11 +105,11 @@ public abstract class Problem {
             }
 
             ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(POOL_SIZE);
-            testCases = createTestCase(testCount, in, results);
 
             long start = System.currentTimeMillis();
 
-            for (TestCase tc:testCases) {
+            for (int i=1;i<=testCount;i++) {
+                TestCase tc = createTestCase(i, in, results[i]);
                 executor.execute(tc);
             }
 

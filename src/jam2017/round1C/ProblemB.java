@@ -3,9 +3,6 @@ package jam2017.round1C;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-
-import jam2017.round1C.ProblemA.Pancakes.Cake;
 
 public class ProblemB extends Round1C {
 
@@ -15,15 +12,8 @@ public class ProblemB extends Round1C {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            Partnering partnering = new Partnering(in, i, results[i]);
-            tcs.add(partnering);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Partnering(in, testNumber, result);
     }
 
     static class Partnering extends TestCase {

@@ -3,7 +3,6 @@ package jam2017.round1B;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class ProblemB extends Round1B {
 
@@ -13,16 +12,8 @@ public class ProblemB extends Round1B {
     }
 
     @Override
-    protected List<TestCase> createTestCase(int testCount, InputReader in,  StringBuffer [] results) {
-
-        List<TestCase> tcs = new ArrayList<>();
-
-        for (int i=1;i<=testCount;i++) {
-            Neighbors neighbors = new Neighbors(in, i, results[i]);
-            tcs.add(neighbors);
-        }
-
-        return tcs;
+    protected TestCase createTestCase(int testNumber, InputReader in,  StringBuffer result) {
+        return new Neighbors(in, testNumber, result);
     }
 
     static class Neighbors extends TestCase {
