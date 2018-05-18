@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -26,71 +27,125 @@ public class ProblemB extends Round1C {
 
         static final int DAY = 24 * 60; //1440
         int Ac, Aj;
-        TimeTable table;
+        int ADc, ADj;
+        int FTc, FTj;
+        TimeTable TT;
 
         protected Partnering(InputReader in, int testNumber, StringBuffer result) {
             super(testNumber, result);
 
             Ac = in.nextInt(); Aj = in.nextInt();
 
-            table = new TimeTable();
+            TT = new TimeTable();
 
             for (int i=0;i<Ac;i++) {
                 int start = in.nextInt();
                 int end = in.nextInt();
-                table.addActivity(start, end, true);
+                ADc += TT.addActivity(start, end, true);
             }
 
             for (int i=0;i<Aj;i++) {
                 int start = in.nextInt();
                 int end = in.nextInt();
-                table.addActivity(start, end, false);
+                ADj += TT.addActivity(start, end, false);
             }
+
+            FTc = 720 - ADj;
+            FTj = 720 - ADc;
+            // The sum of Activity durations.
+            System.out.println("ADc:" + ADc + " ADj" + ADj);
         }
 
         @Override
         protected String solve() {
-            table.sort();
-            ArrayList<Freetime> freetimes = table.getFreeTime();
+            TT.sort();
+            ArrayList<Freetime> freetimes = TT.getFreeTime();
 
             System.out.println("====================");
+
+            Iterator<Freetime> itor = freetimes.iterator();
+
+            int changes = 0;
+
+            while (itor.hasNext()) {
+                Freetime item = itor.next();
+
+                if (item.startIsCameron != item.endIsCameron) {
+                    changes++;
+                } else {
+                    if (item.startIsCameron) {
+                        if (item.duration <= FTj) {
+                            FTj -= item.duration;
+                        } else {
+                            changes+=2;
+                        }
+                    } else {
+                        if (item.duration <= FTc) {
+                            FTc -= item.duration;
+                        } else {
+                            changes+=2;
+                        }
+                    }
+                }
+            }
+
+            changes += TT.countActivitySwitch();
+
             for (Freetime freetime:freetimes) {
                 freetime.print();
             }
 
-            return null;
+            return String.format("Case #%d: %d\n", testNumber, changes);
         }
 
         class TimeTable {
-            ArrayList<Activity> table = new ArrayList<>();
-            int Tc, Tj;
-            void addActivity(int start, int end, boolean isCameron) {
-                table.add(new Activity(start, end, isCameron));
-                int duration = end - start;
+            ArrayList<Activity> activities = new ArrayList<>();
 
-                if (isCameron) {
-                    Tc += duration;
-                } else {
-                    Tj += duration;
-                }
+            int addActivity(int start, int end, boolean isCameron) {
+                activities.add(new Activity(start, end, isCameron));
+                return  end - start;
             }
 
             void sort() {
-                Collections.sort(table, new Comparator<Activity>() {
+                Collections.sort(activities, new Comparator<Activity>() {
                     @Override
                     public int compare(Activity o1, Activity o2) {
-                        return o2.start - o1.start;
+                        return o1.start - o2.start;
                     }
                 });
+            }
+
+            int countActivitySwitch() {
+
+                int size = activities.size();
+
+                if (size < 2) {
+                    return 0;
+                }
+
+                int count = 0;
+
+                for (int i=0;i<size;i++) {
+                    Activity act1 = activities.get(i);
+                    Activity act2 = (i+1<size)?activities.get(i+1):activities.get(0);
+
+                    if (act1.end%DAY == act2.start%DAY) {
+                        if (act1.isCameron != act2.isCameron) {
+                            count++;
+                        }
+                    }
+                }
+
+                return count;
             }
 
             ArrayList<Freetime> getFreeTime() {
                 ArrayList<Freetime> result = new ArrayList<>();
 
-                int size = table.size();
+                int size = activities.size();
                 for (int i=0;i<size;i++) {
-                    Activity act1 = table.get(i);
-                    Activity act2 = (i+1<size)?table.get(i+1):table.get(0);
+                    Activity act1 = activities.get(i);
+                    Activity act2 = (i+1<size)?activities.get(i+1):activities.get(0);
 
                     int duration = (act2.start - act1.end + DAY)%DAY;
                     if (duration > 0) {
@@ -98,6 +153,13 @@ public class ProblemB extends Round1C {
                         result.add(free);
                     }
                 }
+
+                Collections.sort(result, new Comparator<Freetime>() {
+                    @Override
+                    public int compare(Freetime f1, Freetime f2) {
+                        return f1.duration - f2.duration;
+                    }
+                });
 
                 return result;
             }

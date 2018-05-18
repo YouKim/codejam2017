@@ -2,7 +2,7 @@ package jam2017.round1C;
 
 import jam2017.Problem;
 
-public abstract class Round1C extends Problem{
+public abstract class Round1C extends Problem {
 
     @Override
     protected String getSubfolderName() {

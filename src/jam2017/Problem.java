@@ -99,6 +99,10 @@ public abstract class Problem {
     }
 
     private void solve(InputStream inputStream, OutputStream outputStream) {
+        solve(inputStream, outputStream, POOL_SIZE);
+    }
+
+    private void solve(InputStream inputStream, OutputStream outputStream, int poolSize) {
         InputReader in = new InputReader(inputStream);
         PrintWriter out = new PrintWriter(outputStream);
 
@@ -111,7 +115,7 @@ public abstract class Problem {
                 results[i] = new StringBuffer();
             }
 
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(POOL_SIZE);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
 
             long start = System.currentTimeMillis();
 
@@ -149,7 +153,7 @@ public abstract class Problem {
         InputStream inputStream = new ByteArrayInputStream(getSampleInput().getBytes(StandardCharsets.UTF_8));
         OutputStream outputStream = new ByteArrayOutputStream();
 
-        solve(inputStream, outputStream);
+        solve(inputStream, outputStream, 1);
         String expected = getSampleOutput().trim();
         String output = outputStream.toString().trim();
 
@@ -167,7 +171,7 @@ public abstract class Problem {
 
     public static abstract class TestCase implements Runnable {
 
-        protected StringBuffer result;
+        private StringBuffer result;
         protected int testNumber;
 
         protected TestCase(int testNumber, StringBuffer result) {
