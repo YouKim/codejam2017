@@ -1,5 +1,11 @@
 package jam2017.round1A;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import jam2017.Problem;
+
 public class ProblemA extends Round1A {
 
     public ProblemA() {
@@ -96,5 +102,49 @@ public class ProblemA extends Round1A {
             }
             return result.toString();
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "3\n" +
+                "3 3\n" +
+                "G??\n" +
+                "?C?\n" +
+                "??J\n" +
+                "3 4\n" +
+                "CODE\n" +
+                "????\n" +
+                "?JAM\n" +
+                "2 2\n" +
+                "CA\n" +
+                "KE";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1:\n" +
+                "GGJ\n" +
+                "CCJ\n" +
+                "CCJ\n" +
+                "Case #2:\n" +
+                "CODE\n" +
+                "COAE\n" +
+                "JJAM\n" +
+                "Case #3:\n" +
+                "CA\n" +
+                "KE";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemA();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemA();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

@@ -1,8 +1,14 @@
 package jam2017.round1B;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.junit.Test;
+
+import jam2017.Problem;
 
 public class ProblemB extends Round1B {
 
@@ -143,5 +149,35 @@ public class ProblemB extends Round1B {
 
             return result;
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "4\n" +
+                "6 2 0 2 0 2 0\n" +
+                "3 1 0 2 0 0 0\n" +
+                "6 2 0 1 1 2 0\n" +
+                "4 0 0 2 0 0 2";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: RYBRBY\n" +
+                "Case #2: IMPOSSIBLE\n" +
+                "Case #3: YBRGRB\n" +
+                "Case #4: YVYV";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemB();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemB();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

@@ -1,5 +1,7 @@
 package jam2017.qualificationRound;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +9,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import org.junit.Test;
+
+import jam2017.Problem;
 
 public class ProblemD extends Qulification {
 
@@ -329,5 +335,43 @@ public class ProblemD extends Qulification {
         Iterator<Node> iterator() {
             return mCandidate.iterator();
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "3\n" +
+                "2 0\n" +
+                "1 1\n" +
+                "o 1 1\n" +
+                "3 4\n" +
+                "+ 2 3\n" +
+                "+ 2 1\n" +
+                "x 3 1\n" +
+                "+ 2 2";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 4 3\n" +
+                "o 2 2\n" +
+                "+ 2 1\n" +
+                "x 1 1\n" +
+                "Case #2: 2 0\n" +
+                "Case #3: 6 2\n" +
+                "o 2 3\n" +
+                "x 1 2\n";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemD();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemD();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

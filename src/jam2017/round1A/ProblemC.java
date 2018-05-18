@@ -1,5 +1,11 @@
 package jam2017.round1A;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import jam2017.Problem;
+
 public class ProblemC extends Round1A {
 
     public ProblemC() {
@@ -179,5 +185,35 @@ public class ProblemC extends Round1A {
         private int floor2(int x, int y) { // y > 0 guaranteed
             return x/y - ((x%y==0)?1:0);
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "4\n" +
+                "11 5 16 5 0 0\n" +
+                "3 1 3 2 2 0\n" +
+                "3 1 3 2 1 0\n" +
+                "2 1 5 1 1 1";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 5\n" +
+                "Case #2: 2\n" +
+                "Case #3: IMPOSSIBLE\n" +
+                "Case #4: 5";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemC();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemC();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

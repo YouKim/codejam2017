@@ -1,6 +1,8 @@
 package jam2017;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.concurrent.Executors;
@@ -21,8 +24,8 @@ public abstract class Problem {
     static final String INPUTFILE_EXT = ".in";
     static final String OUTPUTFILE_EXT = ".out";
 
-    static final String INPUT_FOLDER = "input/";
-    static final String OUTPUT_FOLDER = "output/";
+    static final String INPUT_FOLDER = "input";
+    static final String OUTPUT_FOLDER = "output";
 
     public static final String IMPOSSIBLE = "IMPOSSIBLE";
 
@@ -32,16 +35,17 @@ public abstract class Problem {
 
     protected String mAlpha;
     protected String mTitle;
-    protected String mSubFolderName;
 
     protected abstract TestCase createTestCase(int testCount, InputReader in, StringBuffer result);
     protected abstract String getSubfolderName();
+    protected abstract String getSampleInput();
+    protected abstract String getSampleOutput();
 
-    public final void solve() {
+    public void solve() {
         Locale.setDefault(Locale.US);
         try {
             final String regex = mAlpha + INPUT_PATERN;
-            File directory = new File(INPUT_FOLDER + getSubfolderName());
+            File directory = new File(INPUT_FOLDER + '/' + getSubfolderName());
             File[] inputFiles = directory.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -63,10 +67,10 @@ public abstract class Problem {
         }
     }
 
-    public final void processFile(File inputFile) {
+    private void processFile(File inputFile) {
 
         String inputFileName = inputFile.getName();
-        String outputFileName = OUTPUT_FOLDER + getSubfolderName() + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
+        String outputFileName = OUTPUT_FOLDER + '/' + getSubfolderName() + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
         System.out.println("outputFileName:" + outputFileName);
 
         InputStream inputStream;
@@ -91,12 +95,15 @@ public abstract class Problem {
             return;
         }
 
+        solve(inputStream, outputStream);
+    }
+
+    private void solve(InputStream inputStream, OutputStream outputStream) {
         InputReader in = new InputReader(inputStream);
         PrintWriter out = new PrintWriter(outputStream);
 
         try {
             int testCount = Integer.parseInt(in.next());
-
 
             StringBuffer results [] = new StringBuffer[testCount+1];
 
@@ -113,11 +120,12 @@ public abstract class Problem {
                 executor.execute(tc);
             }
 
-            executor.shutdown();
-
             while (executor.getActiveCount() > 0) {
                 Thread.sleep(MILLI_WAIT);
             }
+
+            executor.shutdown();
+
 
             System.out.println("Done:" + (System.currentTimeMillis() - start) + "ms");
 
@@ -135,6 +143,26 @@ public abstract class Problem {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean test() {
+        InputStream inputStream = new ByteArrayInputStream(getSampleInput().getBytes(StandardCharsets.UTF_8));
+        OutputStream outputStream = new ByteArrayOutputStream();
+
+        solve(inputStream, outputStream);
+        String expected = getSampleOutput().trim();
+        String output = outputStream.toString().trim();
+
+        int cmp = output.toString().compareTo(expected);
+
+        if (cmp != 0) {
+            System.out.println("expected  ==");
+            System.out.println(expected);
+            System.out.println("output    ==");
+            System.out.println(output);
+        }
+
+        return cmp == 0;
     }
 
     public static abstract class TestCase implements Runnable {
@@ -156,11 +184,12 @@ public abstract class Problem {
     }
 
     public static class InputReader {
+        static final int BUFFER_SIZE = 32768; // 32K
         public BufferedReader reader;
         public StringTokenizer tokenizer;
 
         public InputReader(InputStream stream) {
-            reader = new BufferedReader(new InputStreamReader(stream), 32768);
+            reader = new BufferedReader(new InputStreamReader(stream), BUFFER_SIZE);
             tokenizer = null;
         }
 

@@ -1,9 +1,15 @@
 package jam2017.round1A;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import org.junit.Test;
+
+import jam2017.Problem;
 
 public class ProblemB extends Round1A {
 
@@ -124,5 +130,57 @@ public class ProblemB extends Round1A {
                 return (max - min + 1 > 0);
             }
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "6\n" +
+                "2 1\n" +
+                "500 300\n" +
+                "900\n" +
+                "660\n" +
+                "2 1\n" +
+                "500 300\n" +
+                "1500\n" +
+                "809\n" +
+                "2 2\n" +
+                "50 100\n" +
+                "450 449\n" +
+                "1100 1101\n" +
+                "2 1\n" +
+                "500 300\n" +
+                "300\n" +
+                "500\n" +
+                "1 8\n" +
+                "10\n" +
+                "11 13 17 11 16 14 12 18\n" +
+                "3 3\n" +
+                "70 80 90\n" +
+                "1260 1500 700\n" +
+                "800 1440 1600\n" +
+                "1700 1620 900";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 1\n" +
+                "Case #2: 0\n" +
+                "Case #3: 1\n" +
+                "Case #4: 0\n" +
+                "Case #5: 3\n" +
+                "Case #6: 3";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemB();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemB();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

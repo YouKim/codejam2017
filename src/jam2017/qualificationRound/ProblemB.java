@@ -1,5 +1,11 @@
 package jam2017.qualificationRound;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import jam2017.Problem;
+
 public class ProblemB extends Qulification {
 
     public ProblemB() {
@@ -40,4 +46,33 @@ public class ProblemB extends Qulification {
         }
     }
 
+    @Override
+    protected String getSampleInput() {
+        return "4\n" +
+                "132\n" +
+                "1000\n" +
+                "7\n" +
+                "111111111111111110";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 129\n" +
+                "Case #2: 999\n" +
+                "Case #3: 7\n" +
+                "Case #4: 99999999999999999\n";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemB();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemB();
+        boolean result = problem.test();
+
+        assertTrue(result);
+    }
 }

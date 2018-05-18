@@ -1,5 +1,11 @@
 package jam2017.round1B;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import jam2017.Problem;
+
 public class ProblemC extends Round1B {
 
     public ProblemC() {
@@ -100,5 +106,60 @@ public class ProblemC extends Round1B {
 
             return String.format("Case #%d: %s\n", testNumber, result.toString().trim());
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "3\n" +
+                "3 1\n" +
+                "2 3\n" +
+                "2 4\n" +
+                "4 4\n" +
+                "-1 1 -1\n" +
+                "-1 -1 1\n" +
+                "-1 -1 -1\n" +
+                "1 3\n" +
+                "4 1\n" +
+                "13 10\n" +
+                "1 1000\n" +
+                "10 8\n" +
+                "5 5\n" +
+                "-1 1 -1 -1\n" +
+                "-1 -1 1 -1\n" +
+                "-1 -1 -1 10\n" +
+                "-1 -1 -1 -1\n" +
+                "1 4\n" +
+                "4 3\n" +
+                "30 60\n" +
+                "10 1000\n" +
+                "12 5\n" +
+                "20 1\n" +
+                "-1 10 -1 31\n" +
+                "10 -1 10 -1\n" +
+                "-1 -1 -1 10\n" +
+                "15 6 -1 -1\n" +
+                "2 4\n" +
+                "3 1\n" +
+                "3 2";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 0.583333333\n" +
+                "Case #2: 1.2\n" +
+                "Case #3: 0.51 8.01 8.0";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemC();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemC();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

@@ -1,8 +1,14 @@
 package jam2017.round1C;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.junit.Test;
+
+import jam2017.Problem;
 
 public class ProblemA extends Round1C {
 
@@ -95,5 +101,46 @@ public class ProblemA extends Round1C {
 
             return String.format("Case #%d: %f\n", testNumber, maximumArea * Math.PI);
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "4\n" +
+                "2 1\n" +
+                "100 20\n" +
+                "200 10\n" +
+                "2 2\n" +
+                "100 20\n" +
+                "200 10\n" +
+                "3 2\n" +
+                "100 10\n" +
+                "100 10\n" +
+                "100 10\n" +
+                "4 2\n" +
+                "9 3\n" +
+                "7 1\n" +
+                "10 1\n" +
+                "8 4";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 138230.076757951\n" +
+                "Case #2: 150796.447372310\n" +
+                "Case #3: 43982.297150257\n" +
+                "Case #4: 625.176938064";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemA();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemA();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

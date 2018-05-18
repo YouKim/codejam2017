@@ -1,6 +1,13 @@
 package jam2017.qualificationRound;
 
 import java.util.Map.Entry;
+
+import org.junit.Test;
+
+import jam2017.Problem;
+
+import static org.junit.Assert.assertTrue;
+
 import java.util.TreeMap;
 
 public class ProblemC extends Qulification {
@@ -77,5 +84,37 @@ public class ProblemC extends Qulification {
             return String.format("Case #%d: %d %d\n", testNumber, max, min);
         }
 
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "5\n" +
+                "4 2\n" +
+                "5 2\n" +
+                "6 2\n" +
+                "1000 1000\n" +
+                "1000 1";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 1 0\n" +
+                "Case #2: 1 0\n" +
+                "Case #3: 1 1\n" +
+                "Case #4: 0 0\n" +
+                "Case #5: 500 499";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemC();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemC();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }

@@ -1,8 +1,14 @@
 package jam2017.round1C;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.junit.Test;
+
+import jam2017.Problem;
 
 public class ProblemB extends Round1C {
 
@@ -125,9 +131,57 @@ public class ProblemB extends Round1C {
             }
 
             public void print() {
-                // TODO Auto-generated method stub
                 System.out.printf("%4d %4d %4d %5s %5s\n", start, end, duration, startIsCameron, endIsCameron);
             }
         }
+    }
+
+    @Override
+    protected String getSampleInput() {
+        return "5\n" +
+                "1 1\n" +
+                "540 600\n" +
+                "840 900\n" +
+                "2 0\n" +
+                "900 1260\n" +
+                "180 540\n" +
+                "1 1\n" +
+                "1439 1440\n" +
+                "0 1\n" +
+                "2 2\n" +
+                "0 1\n" +
+                "1439 1440\n" +
+                "1438 1439\n" +
+                "1 2\n" +
+                "3 4\n" +
+                "0 10\n" +
+                "1420 1440\n" +
+                "90 100\n" +
+                "550 600\n" +
+                "900 950\n" +
+                "100 150\n" +
+                "1050 1400";
+    }
+
+    @Override
+    protected String getSampleOutput() {
+        return "Case #1: 2\n" +
+                "Case #2: 4\n" +
+                "Case #3: 2\n" +
+                "Case #4: 4\n" +
+                "Case #5: 6";
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new ProblemB();
+        problem.solve();
+    }
+
+    @Test
+    public void testSample() {
+        Problem problem = new ProblemB();
+        boolean result = problem.test();
+
+        assertTrue(result);
     }
 }
