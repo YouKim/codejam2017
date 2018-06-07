@@ -9,7 +9,7 @@ import jam2017.Problem;
 public class ProblemB extends Qulification {
 
     public ProblemB() {
-        mAlpha = "B";
+        mAlphabet = "B";
         mTitle = "Tidy Numbers";
     }
 

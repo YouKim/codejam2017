@@ -9,7 +9,7 @@ import jam2017.Problem;
 public class ProblemA extends Round1B {
 
     public ProblemA() {
-        mAlpha = "A";
+        mAlphabet = "A";
         mTitle = "Steed 2: Cruise Control";
     }
 

@@ -13,7 +13,7 @@ import jam2017.Problem;
 public class ProblemA extends Round1C {
 
     public ProblemA() {
-        mAlpha = "A";
+        mAlphabet = "A";
         mTitle = "Ample Syrup";
     }
 

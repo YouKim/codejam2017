@@ -17,7 +17,7 @@ import jam2017.Problem;
 public class ProblemD extends Qulification {
 
     public ProblemD() {
-        mAlpha = "D";
+        mAlphabet = "D";
         mTitle = "Fashion Show";
     }
 

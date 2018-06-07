@@ -6,7 +6,7 @@ public abstract class Round1A extends Problem {
 
     @Override
     protected String getSubfolderName() {
-        return "round1A/";
+        return "round1A";
     }
 
     public static void main(String[] args) {

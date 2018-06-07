@@ -14,7 +14,7 @@ import jam2017.Problem;
 public class ProblemB extends Round1C {
 
     public ProblemB() {
-        mAlpha = "B";
+        mAlphabet = "B";
         mTitle = "Parenting Partnering";
     }
 
@@ -65,7 +65,13 @@ public class ProblemB extends Round1C {
 
             Iterator<Freetime> itor = freetimes.iterator();
 
-            int changes = 0;
+            // count switching between activities.
+            int changes = TT.countActivitySwitch();;
+
+            // count switching between free time (Gap between activities)
+            // gap exists between the same person and can be covered. 0
+            // gap exists between the same person and can not be covered. +2
+            // gap exists between different persons, +1
 
             while (itor.hasNext()) {
                 Freetime item = itor.next();
@@ -88,8 +94,6 @@ public class ProblemB extends Round1C {
                     }
                 }
             }
-
-            changes += TT.countActivitySwitch();
 
             for (Freetime freetime:freetimes) {
                 freetime.print();

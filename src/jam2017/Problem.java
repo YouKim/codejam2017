@@ -33,7 +33,7 @@ public abstract class Problem {
     static final int POOL_SIZE = 6;
     static final int MILLI_WAIT = 10;
 
-    protected String mAlpha;
+    protected String mAlphabet;
     protected String mTitle;
 
     protected abstract TestCase createTestCase(int testCount, InputReader in, StringBuffer result);
@@ -44,7 +44,7 @@ public abstract class Problem {
     public void solve() {
         Locale.setDefault(Locale.US);
         try {
-            final String regex = mAlpha + INPUT_PATERN;
+            final String regex = mAlphabet + INPUT_PATERN;
             File directory = new File(INPUT_FOLDER + '/' + getSubfolderName());
             File[] inputFiles = directory.listFiles(new FilenameFilter() {
                 @Override
@@ -70,7 +70,7 @@ public abstract class Problem {
     private void processFile(File inputFile) {
 
         String inputFileName = inputFile.getName();
-        String outputFileName = OUTPUT_FOLDER + '/' + getSubfolderName() + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
+        String outputFileName = OUTPUT_FOLDER + '/' + getSubfolderName() +  '/' + inputFileName.replace(INPUTFILE_EXT, OUTPUTFILE_EXT);
         System.out.println("outputFileName:" + outputFileName);
 
         InputStream inputStream;
@@ -130,7 +130,6 @@ public abstract class Problem {
 
             executor.shutdown();
 
-
             System.out.println("Done:" + (System.currentTimeMillis() - start) + "ms");
 
             for (int i=1;i<=testCount;i++) {
@@ -153,6 +152,7 @@ public abstract class Problem {
         InputStream inputStream = new ByteArrayInputStream(getSampleInput().getBytes(StandardCharsets.UTF_8));
         OutputStream outputStream = new ByteArrayOutputStream();
 
+        //For better debugging, use single thread pool here.
         solve(inputStream, outputStream, 1);
         String expected = getSampleOutput().trim();
         String output = outputStream.toString().trim();
@@ -218,6 +218,10 @@ public abstract class Problem {
 
         public char nextChar() {
             return next().charAt(0);
+        }
+
+        public double nextDouble() {
+            return Double.parseDouble(next());
         }
 
         public void close() throws IOException {

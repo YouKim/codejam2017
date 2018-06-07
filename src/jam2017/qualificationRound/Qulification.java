@@ -6,7 +6,7 @@ public abstract class Qulification extends Problem {
 
     @Override
     protected String getSubfolderName() {
-        return "qualification/";
+        return "qualification";
     }
 
     public static void main(String[] args) {

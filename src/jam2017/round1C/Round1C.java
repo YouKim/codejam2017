@@ -6,12 +6,12 @@ public abstract class Round1C extends Problem {
 
     @Override
     protected String getSubfolderName() {
-        return "round1C/";
+        return "round1C";
     }
 
     public static void main(String[] args) {
         Problem [] problems = {
-                //new ProblemA(),
+                new ProblemA(),
                 new ProblemB(),
                 //new ProblemC(),
         };

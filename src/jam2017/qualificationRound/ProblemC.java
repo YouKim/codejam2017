@@ -13,7 +13,7 @@ import java.util.TreeMap;
 public class ProblemC extends Qulification {
 
     public ProblemC() {
-        mAlpha = "C";
+        mAlphabet = "C";
         mTitle = "Bathroom Stalls";
     }
 
